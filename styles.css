@@ -1239,9 +1239,10 @@ h1, h2, h3, h4, .navbar a {
 
 .control-hub-top {
     display: grid;
-    grid-template-columns: 1fr 340px;
+    grid-template-columns: 1.35fr 1.15fr 1.15fr;
     gap: 20px;
     align-items: flex-end;
+    margin-bottom: 22px;
 }
 
 .control-hub-label {
@@ -1292,7 +1293,7 @@ h1, h2, h3, h4, .navbar a {
     border-color: var(--blue-accent);
     background: var(--white);
     outline: none;
-    box-shadow: 0 0 0 4px rgba(255, 153, 0, 0.15);
+    box-shadow: 0 0 0 4px rgba(0, 114, 206, 0.15);
 }
 
 .search-clear-btn {
@@ -1308,10 +1309,143 @@ h1, h2, h3, h4, .navbar a {
     padding: 4px;
     border-radius: 50%;
     transition: color 0.2s ease;
+    z-index: 2;
 }
 
 .search-clear-btn:hover {
     color: #e53e3e;
+}
+
+/* Combobox interactivo de tipo de maquinaria */
+.combobox-filter-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.combobox-field-container {
+    position: relative;
+    width: 100%;
+}
+
+.combobox-search-input {
+    width: 100%;
+    height: 48px;
+    padding: 10px 42px 10px 44px;
+    border: 1.5px solid #cbd5e0;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-family: inherit;
+    background: #f8fafc;
+    color: var(--text-dark);
+    cursor: text;
+    transition: all 0.25s ease;
+}
+
+.combobox-search-input:focus {
+    border-color: var(--blue-accent);
+    background: var(--white);
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(0, 114, 206, 0.15);
+}
+
+.combobox-chevron-btn {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #718096;
+    cursor: pointer;
+    font-size: 0.85rem;
+    padding: 6px;
+    transition: transform 0.2s ease, color 0.2s ease;
+    z-index: 2;
+}
+
+.combobox-chevron-btn.rotated i {
+    transform: rotate(180deg);
+    color: var(--blue-accent);
+}
+
+.combobox-chevron-btn i {
+    transition: transform 0.2s ease;
+}
+
+.combobox-options-list {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    right: 0;
+    background: var(--white);
+    border: 1.5px solid #cbd5e0;
+    border-radius: 12px;
+    padding: 6px;
+    margin: 0;
+    list-style: none;
+    max-height: 290px;
+    overflow-y: auto;
+    z-index: 100;
+    box-shadow: 0 12px 30px rgba(0, 34, 68, 0.15);
+    display: none;
+}
+
+.combobox-options-list.open {
+    display: block;
+}
+
+.combobox-option-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #4a5568;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+}
+
+.combobox-option-item:hover,
+.combobox-option-item.highlighted {
+    background: #f1f5f9;
+    color: var(--blue-dark);
+}
+
+.combobox-option-item.active {
+    background: #e6f0fa;
+    color: var(--blue-accent);
+}
+
+.combobox-option-item .option-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.combobox-option-item .option-label i {
+    width: 16px;
+    text-align: center;
+    color: var(--blue-accent);
+}
+
+.combobox-option-item .option-count {
+    font-size: 0.78rem;
+    font-weight: 700;
+    background: #edf2f7;
+    color: #718096;
+    padding: 2px 8px;
+    border-radius: 10px;
+}
+
+.combobox-option-item.active .option-count {
+    background: var(--blue-accent);
+    color: #ffffff;
+}
+
+.combobox-option-item.hidden {
+    display: none !important;
 }
 
 .select-with-icon {
@@ -1339,7 +1473,7 @@ h1, h2, h3, h4, .navbar a {
     border-color: var(--blue-accent);
     background: var(--white);
     outline: none;
-    box-shadow: 0 0 0 4px rgba(255, 153, 0, 0.15);
+    box-shadow: 0 0 0 4px rgba(0, 114, 206, 0.15);
 }
 
 .select-caret {
@@ -1352,87 +1486,26 @@ h1, h2, h3, h4, .navbar a {
     font-size: 0.85rem;
 }
 
-.control-hub-divider {
-    position: relative;
-    border-top: 1px solid #edf2f7;
-    margin: 22px 0 18px 0;
-    text-align: left;
-}
-
-.divider-text {
-    position: relative;
-    top: -10px;
-    background: var(--white);
-    padding-right: 12px;
-    font-size: 0.8rem;
-    font-weight: 700;
-    color: #718096;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+.btn-reset-filters {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-}
-
-.divider-text i {
-    color: var(--blue-accent);
-}
-
-/* Píldoras de Categoría */
-.machinery-categories-nav {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 20px;
-}
-
-.category-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 16px;
-    border: 1.5px solid #e2e8f0;
-    background: #f8fafc;
-    color: #4a5568;
-    border-radius: 8px;
-    font-size: 0.88rem;
-    font-weight: 600;
-    font-family: inherit;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.category-pill:hover {
-    border-color: var(--blue-dark);
-    color: var(--blue-dark);
     background: #edf2f7;
-    transform: translateY(-1px);
-}
-
-.category-pill.active {
-    background: var(--blue-dark);
-    color: var(--white);
-    border-color: var(--blue-dark);
-    box-shadow: 0 4px 14px rgba(0, 26, 51, 0.25);
-}
-
-.category-pill.active .pill-badge {
-    background: var(--blue-accent);
     color: var(--blue-dark);
+    border: 1px solid #cbd5e0;
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-left: 10px;
+    transition: all 0.2s ease;
 }
 
-.pill-badge {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+.btn-reset-filters:hover {
     background: #e2e8f0;
-    color: #4a5568;
-    font-size: 0.75rem;
-    font-weight: 700;
-    padding: 2px 7px;
-    border-radius: 10px;
-    margin-left: 2px;
-    transition: all 0.2s ease;
+    color: #c53030;
+    border-color: #cbd5e0;
 }
 
 /* Barra de estado integrada */

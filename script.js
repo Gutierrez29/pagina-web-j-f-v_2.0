@@ -618,10 +618,18 @@
         const searchInput = document.getElementById('machinery-search');
         const searchClearBtn = document.getElementById('search-clear-btn');
         const workTypeFilter = document.getElementById('work-type-filter');
-        const categoryPills = document.querySelectorAll('.category-pill');
         const counterText = document.getElementById('machinery-counter-text');
         const noResultsBox = document.getElementById('no-machinery-found');
         const resetFiltersBtn = document.getElementById('reset-filters-btn');
+        const resetAllFiltersBtn = document.getElementById('reset-all-filters-btn');
+
+        // Elementos del Combobox de Categoría
+        const categoryComboboxWrap = document.getElementById('category-combobox-wrap');
+        const categoryInput = document.getElementById('category-combobox-input');
+        const categoryToggleBtn = document.getElementById('category-toggle-btn');
+        const categoryDropdown = document.getElementById('category-dropdown-list');
+        const categoryClearBtn = document.getElementById('category-clear-btn');
+        const categoryOptionItems = document.querySelectorAll('.combobox-option-item');
 
         // Modal elements
         const modal = document.getElementById('modal-maquina');
@@ -633,11 +641,52 @@
         let currentWorkType = 'all';
         let currentSearchQuery = '';
 
-        // Actualizar contador total en píldora 'Todas'
+        // Actualizar contador total
         const countAllEl = document.getElementById('count-all');
         if (countAllEl) {
             countAllEl.textContent = FLEET_DATA.length;
         }
+
+        // Toggle del dropdown de categorías
+        const toggleCategoryDropdown = (forceState) => {
+            if (!categoryDropdown) return;
+            const isOpen = forceState !== undefined ? forceState : !categoryDropdown.classList.contains('open');
+            categoryDropdown.classList.toggle('open', isOpen);
+            if (categoryToggleBtn) {
+                categoryToggleBtn.classList.toggle('rotated', isOpen);
+            }
+            if (isOpen) {
+                if (!categoryInput || !categoryInput.value.trim()) {
+                    categoryOptionItems.forEach(item => item.classList.remove('hidden'));
+                }
+            }
+        };
+
+        // Selección de categoría
+        const selectCategoryOption = (catValue, labelText) => {
+            currentCategory = catValue;
+            if (categoryInput) {
+                if (catValue === 'all') {
+                    categoryInput.value = '';
+                    categoryInput.placeholder = `Todas las categorías (${FLEET_DATA.length})`;
+                    if (categoryClearBtn) categoryClearBtn.style.display = 'none';
+                } else {
+                    categoryInput.value = labelText || catValue;
+                    if (categoryClearBtn) categoryClearBtn.style.display = 'block';
+                }
+            }
+
+            // Marcar ítem activo
+            categoryOptionItems.forEach(item => {
+                const isMatch = item.getAttribute('data-category') === catValue;
+                item.classList.toggle('active', isMatch);
+                item.setAttribute('aria-selected', isMatch ? 'true' : 'false');
+                item.classList.remove('hidden');
+            });
+
+            toggleCategoryDropdown(false);
+            filterFleet();
+        };
 
         // Función para renderizar tarjetas
         const renderCatalog = (items) => {
@@ -706,10 +755,20 @@
         // Función de filtrado multidimensional
         const filterFleet = () => {
             const query = currentSearchQuery.toLowerCase().trim();
+            const catQuery = currentCategory.toLowerCase().trim();
 
             const filtered = FLEET_DATA.filter(item => {
-                // Filtro por categoría
-                const matchesCategory = currentCategory === 'all' || item.category === currentCategory;
+                // Filtro por categoría (exacto o parcial por texto)
+                const matchesCategory = (() => {
+                    if (catQuery === 'all' || !catQuery) return true;
+                    const itemCat = item.category.toLowerCase();
+                    if (itemCat === catQuery || itemCat.includes(catQuery)) return true;
+                    if (catQuery.includes('carmix') && item.category === 'Hormigón y Concreto') return true;
+                    if ((catQuery.includes('cama baja') || catQuery.includes('camabaja')) && item.category === 'Transporte Pesado') return true;
+                    if (catQuery.includes('fmx') && item.category === 'Volquetes y Acarreo') return true;
+                    if (catQuery.includes('matpel') && item.category === 'Cisternas y MATPEL') return true;
+                    return false;
+                })();
 
                 // Filtro por tipo de trabajo
                 const matchesWorkType = currentWorkType === 'all' || item.workType === currentWorkType;
@@ -726,10 +785,16 @@
                 return matchesCategory && matchesWorkType && matchesSearch;
             });
 
+            // Visibilidad del botón de restablecer filtros
+            if (resetAllFiltersBtn) {
+                const hasActiveFilters = (currentCategory !== 'all') || (currentWorkType !== 'all') || (currentSearchQuery !== '');
+                resetAllFiltersBtn.style.display = hasActiveFilters ? 'inline-flex' : 'none';
+            }
+
             renderCatalog(filtered);
         };
 
-        // Event Listeners para búsqueda
+        // Event Listeners para búsqueda en flota
         if (searchInput) {
             let debounceTimer = null;
             searchInput.addEventListener('input', (e) => {
@@ -756,18 +821,97 @@
             });
         }
 
-        // Filtro por píldoras de categoría
-        categoryPills.forEach(pill => {
-            pill.addEventListener('click', () => {
-                categoryPills.forEach(p => {
-                    p.classList.remove('active');
-                    p.setAttribute('aria-selected', 'false');
-                });
-                pill.classList.add('active');
-                pill.setAttribute('aria-selected', 'true');
-                currentCategory = pill.getAttribute('data-category');
-                filterFleet();
+        // Event Listeners para Combobox de Tipo de Maquinaria
+        if (categoryToggleBtn) {
+            categoryToggleBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                toggleCategoryDropdown();
             });
+        }
+
+        if (categoryInput) {
+            categoryInput.addEventListener('click', (e) => {
+                e.stopPropagation();
+                toggleCategoryDropdown(true);
+            });
+
+            categoryInput.addEventListener('focus', () => {
+                toggleCategoryDropdown(true);
+            });
+
+            // Permite escribir para filtrar dinámicamente ("si se puede escribir mejor")
+            let catDebounce = null;
+            categoryInput.addEventListener('input', (e) => {
+                clearTimeout(catDebounce);
+                catDebounce = setTimeout(() => {
+                    const text = e.target.value.toLowerCase().trim();
+                    if (categoryClearBtn) {
+                        categoryClearBtn.style.display = text ? 'block' : 'none';
+                    }
+
+                    toggleCategoryDropdown(true);
+
+                    // Filtrar opciones en el dropdown
+                    categoryOptionItems.forEach(item => {
+                        const label = item.querySelector('.option-label')?.textContent.toLowerCase() || '';
+                        const catVal = (item.getAttribute('data-category') || '').toLowerCase();
+                        const isAll = catVal === 'all';
+                        if (isAll || label.includes(text) || catVal.includes(text)) {
+                            item.classList.remove('hidden');
+                        } else {
+                            item.classList.add('hidden');
+                        }
+                    });
+
+                    // Actualizar categoría activa
+                    currentCategory = text === '' ? 'all' : text;
+                    filterFleet();
+                }, 100);
+            });
+
+            categoryInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    toggleCategoryDropdown(false);
+                } else if (e.key === 'Enter') {
+                    e.preventDefault();
+                    const firstVisible = Array.from(categoryOptionItems).find(
+                        item => !item.classList.contains('hidden') && item.getAttribute('data-category') !== 'all'
+                    );
+                    if (firstVisible) {
+                        const cat = firstVisible.getAttribute('data-category');
+                        const label = firstVisible.querySelector('.option-label')?.textContent.trim();
+                        selectCategoryOption(cat, label);
+                    } else {
+                        toggleCategoryDropdown(false);
+                    }
+                }
+            });
+        }
+
+        // Click en opciones del dropdown
+        categoryOptionItems.forEach(item => {
+            item.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const cat = item.getAttribute('data-category');
+                const label = item.querySelector('.option-label')?.textContent.trim();
+                selectCategoryOption(cat, label);
+            });
+        });
+
+        // Botón limpiar categoría (x)
+        if (categoryClearBtn) {
+            categoryClearBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                selectCategoryOption('all', '');
+                if (categoryInput) categoryInput.focus();
+            });
+        }
+
+        // Cerrar dropdown al hacer click fuera
+        document.addEventListener('click', (e) => {
+            if (categoryComboboxWrap && !categoryComboboxWrap.contains(e.target)) {
+                toggleCategoryDropdown(false);
+            }
         });
 
         // Filtro por tipo de trabajo
@@ -778,26 +922,26 @@
             });
         }
 
-        // Botón de restablecer filtros
+        // Botón de restablecer todos los filtros
+        const handleResetAll = () => {
+            if (searchInput) {
+                searchInput.value = '';
+                currentSearchQuery = '';
+                if (searchClearBtn) searchClearBtn.style.display = 'none';
+            }
+            if (workTypeFilter) {
+                workTypeFilter.value = 'all';
+                currentWorkType = 'all';
+            }
+            selectCategoryOption('all', '');
+        };
+
+        if (resetAllFiltersBtn) {
+            resetAllFiltersBtn.addEventListener('click', handleResetAll);
+        }
+
         if (resetFiltersBtn) {
-            resetFiltersBtn.addEventListener('click', () => {
-                if (searchInput) {
-                    searchInput.value = '';
-                    currentSearchQuery = '';
-                    if (searchClearBtn) searchClearBtn.style.display = 'none';
-                }
-                if (workTypeFilter) {
-                    workTypeFilter.value = 'all';
-                    currentWorkType = 'all';
-                }
-                categoryPills.forEach(p => {
-                    const isAll = p.getAttribute('data-category') === 'all';
-                    p.classList.toggle('active', isAll);
-                    p.setAttribute('aria-selected', isAll ? 'true' : 'false');
-                });
-                currentCategory = 'all';
-                filterFleet();
-            });
+            resetFiltersBtn.addEventListener('click', handleResetAll);
         }
 
         // Delegación de eventos para clicks en Ficha Técnica y Cotizar

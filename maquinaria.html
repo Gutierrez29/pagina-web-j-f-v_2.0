@@ -89,8 +89,9 @@
             <div class="container">
                 <!-- PANEL UNIFICADO DE CONTROL Y FILTROS -->
                 <div class="machinery-control-hub box-shadow">
-                    <!-- Fila Superior: Búsqueda y Selector de Especialidad con etiquetas claras -->
+                    <!-- Fila Superior de Filtros: 3 Columnas Técnicas Alineadas -->
                     <div class="control-hub-top">
+                        <!-- Columna 1: Búsqueda General en Flota -->
                         <div class="search-box-wrapper">
                             <label for="machinery-search" class="control-hub-label">
                                 <i class="fa-solid fa-magnifying-glass"></i> Búsqueda en Flota
@@ -98,7 +99,7 @@
                             <div class="input-with-icon">
                                 <i class="fa-solid fa-magnifying-glass input-lead-icon" aria-hidden="true"></i>
                                 <input type="search" id="machinery-search" class="machinery-search-input" 
-                                       placeholder="Buscar por equipo, marca (Volvo, Cat, Bomag...) o capacidad..." 
+                                       placeholder="Buscar por equipo, marca (Volvo, Cat...) o capacidad..." 
                                        aria-label="Buscar equipo en la flota">
                                 <button type="button" id="search-clear-btn" class="search-clear-btn" aria-label="Limpiar búsqueda" style="display: none;">
                                     <i class="fa-solid fa-xmark"></i>
@@ -106,6 +107,63 @@
                             </div>
                         </div>
 
+                        <!-- Columna 2: Tipo de Maquinaria (Lista Desplegable y Escribible / Combobox) -->
+                        <div class="combobox-filter-wrapper" id="category-combobox-wrap">
+                            <label for="category-combobox-input" class="control-hub-label">
+                                <i class="fa-solid fa-layer-group"></i> Tipo de Maquinaria
+                            </label>
+                            <div class="combobox-field-container">
+                                <i class="fa-solid fa-truck-monster input-lead-icon" aria-hidden="true"></i>
+                                <input type="text" id="category-combobox-input" class="combobox-search-input" 
+                                       placeholder="Todas las categorías (14)" 
+                                       autocomplete="off" spellcheck="false"
+                                       aria-label="Filtrar por tipo de maquinaria (escriba o seleccione)">
+                                <button type="button" id="category-clear-btn" class="search-clear-btn" aria-label="Limpiar tipo de maquinaria" style="display: none;">
+                                    <i class="fa-solid fa-xmark"></i>
+                                </button>
+                                <button type="button" id="category-toggle-btn" class="combobox-chevron-btn" aria-label="Desplegar lista de tipos de maquinaria" tabindex="-1">
+                                    <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
+                                </button>
+
+                                <!-- Lista Desplegable Estilizada -->
+                                <ul id="category-dropdown-list" class="combobox-options-list" role="listbox" aria-label="Lista de tipos de maquinaria">
+                                    <li class="combobox-option-item active" data-category="all" role="option" aria-selected="true">
+                                        <span class="option-label"><i class="fa-solid fa-border-all"></i> Todas las Categorías</span>
+                                        <span class="option-count" id="count-all">14</span>
+                                    </li>
+                                    <li class="combobox-option-item" data-category="Excavadoras" role="option" aria-selected="false">
+                                        <span class="option-label"><i class="fa-solid fa-trowel"></i> Excavadoras</span>
+                                        <span class="option-count">2</span>
+                                    </li>
+                                    <li class="combobox-option-item" data-category="Cargadores Frontales" role="option" aria-selected="false">
+                                        <span class="option-label"><i class="fa-solid fa-gears"></i> Cargadores Frontales</span>
+                                        <span class="option-count">2</span>
+                                    </li>
+                                    <li class="combobox-option-item" data-category="Línea Amarilla" role="option" aria-selected="false">
+                                        <span class="option-label"><i class="fa-solid fa-tractor"></i> Línea Amarilla</span>
+                                        <span class="option-count">4</span>
+                                    </li>
+                                    <li class="combobox-option-item" data-category="Hormigón y Concreto" role="option" aria-selected="false">
+                                        <span class="option-label"><i class="fa-solid fa-cubes-stacked"></i> Hormigón (Carmix)</span>
+                                        <span class="option-count">1</span>
+                                    </li>
+                                    <li class="combobox-option-item" data-category="Volquetes y Acarreo" role="option" aria-selected="false">
+                                        <span class="option-label"><i class="fa-solid fa-truck-ramp-box"></i> Volquetes FMX</span>
+                                        <span class="option-count">1</span>
+                                    </li>
+                                    <li class="combobox-option-item" data-category="Cisternas y MATPEL" role="option" aria-selected="false">
+                                        <span class="option-label"><i class="fa-solid fa-gas-pump"></i> Cisternas & MATPEL</span>
+                                        <span class="option-count">3</span>
+                                    </li>
+                                    <li class="combobox-option-item" data-category="Transporte Pesado" role="option" aria-selected="false">
+                                        <span class="option-label"><i class="fa-solid fa-trailer"></i> Cama Baja</span>
+                                        <span class="option-count">1</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Columna 3: Aplicación Operativa -->
                         <div class="filter-select-wrapper">
                             <label for="work-type-filter" class="control-hub-label">
                                 <i class="fa-solid fa-filter"></i> Aplicación Operativa
@@ -124,44 +182,14 @@
                         </div>
                     </div>
 
-                    <!-- Divisor Integrado -->
-                    <div class="control-hub-divider">
-                        <span class="divider-text"><i class="fa-solid fa-layer-group"></i> Categorías de Maquinaria</span>
-                    </div>
-
-                    <!-- Fila Intermedia: Píldoras de Categoría estilizadas como pestañas -->
-                    <div class="machinery-categories-nav" role="tablist" aria-label="Filtro por categoría de maquinaria">
-                        <button type="button" class="category-pill active" data-category="all" role="tab" aria-selected="true">
-                            <i class="fa-solid fa-border-all"></i> Todas las Categorías <span class="pill-badge" id="count-all">14</span>
-                        </button>
-                        <button type="button" class="category-pill" data-category="Excavadoras" role="tab" aria-selected="false">
-                            <i class="fa-solid fa-trowel"></i> Excavadoras
-                        </button>
-                        <button type="button" class="category-pill" data-category="Cargadores Frontales" role="tab" aria-selected="false">
-                            <i class="fa-solid fa-gears"></i> Cargadores Frontales
-                        </button>
-                        <button type="button" class="category-pill" data-category="Línea Amarilla" role="tab" aria-selected="false">
-                            <i class="fa-solid fa-tractor"></i> Línea Amarilla
-                        </button>
-                        <button type="button" class="category-pill" data-category="Hormigón y Concreto" role="tab" aria-selected="false">
-                            <i class="fa-solid fa-cubes-stacked"></i> Hormigón (Carmix)
-                        </button>
-                        <button type="button" class="category-pill" data-category="Volquetes y Acarreo" role="tab" aria-selected="false">
-                            <i class="fa-solid fa-truck-ramp-box"></i> Volquetes FMX
-                        </button>
-                        <button type="button" class="category-pill" data-category="Cisternas y MATPEL" role="tab" aria-selected="false">
-                            <i class="fa-solid fa-gas-pump"></i> Cisternas & MATPEL
-                        </button>
-                        <button type="button" class="category-pill" data-category="Transporte Pesado" role="tab" aria-selected="false">
-                            <i class="fa-solid fa-trailer"></i> Cama Baja
-                        </button>
-                    </div>
-
-                    <!-- Fila Inferior: Pie de Control con Indicador Activo y Garantías de Flota -->
+                    <!-- Fila Inferior: Pie de Control con Indicador Activo, Botón Restablecer y Garantías -->
                     <div class="machinery-status-bar">
                         <div class="status-counter-wrap">
                             <span class="status-pulse-dot" aria-hidden="true"></span>
                             <span id="machinery-counter-text" class="results-text">Mostrando <strong>14</strong> de 14 equipos disponibles</span>
+                            <button type="button" id="reset-all-filters-btn" class="btn-reset-filters" style="display: none;" aria-label="Restablecer todos los filtros">
+                                <i class="fa-solid fa-rotate-left"></i> Restablecer filtros
+                            </button>
                         </div>
                         <div class="fleet-guarantees">
                             <span><i class="fa-solid fa-circle-check"></i> Certificación Técnica al Día</span>
