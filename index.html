@@ -158,7 +158,9 @@
                     <li><a href="#inicio">Inicio</a></li>
                     <li><a href="#nosotros">Nosotros</a></li>
                     <li><a href="#servicios">Servicios</a></li>
+                    <li><a href="#maquinaria">Maquinaria</a></li>
                     <li><a href="#experiencia">Proyectos</a></li>
+                    <li><a href="#cotizador">Cotizar</a></li>
                     <li><a href="#contacto">Contacto</a></li>
                 </ul>
             </nav>
@@ -321,6 +323,108 @@
                 </div>
             </div>
         </section>
+
+        <!-- SECCIÓN: FLOTA DE MAQUINARIA PESADA Y TRANSPORTE -->
+        <section id="maquinaria" class="section">
+            <div class="container">
+                <div class="section-header-centered reveal">
+                    <span class="section-tag"><i class="fa-solid fa-truck-monster"></i> Flota Operativa Propia</span>
+                    <h2 class="section-title">Flota de Maquinaria y Equipos de Alto Rendimiento</h2>
+                    <p class="section-subtitle">
+                        Disponemos de unidades modernas de servicio pesado (Volvo, Caterpillar, Bomag, Carmix) con certificación técnica vigente, plan de mantenimiento preventivo y operadores homologados para obras mineras y civiles de gran envergadura.
+                    </p>
+                </div>
+
+                <!-- Barra de búsqueda y selector de aplicación -->
+                <div class="machinery-toolbar reveal">
+                    <div class="search-box-wrapper">
+                        <i class="fa-solid fa-magnifying-glass search-icon" aria-hidden="true"></i>
+                        <input type="search" id="machinery-search" class="machinery-search-input" 
+                               placeholder="Buscar por equipo, marca (Volvo, Cat...) o capacidad..." 
+                               aria-label="Buscar equipo en la flota">
+                        <button type="button" id="search-clear-btn" class="search-clear-btn" aria-label="Limpiar búsqueda" style="display: none;">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+
+                    <div class="filter-select-wrapper">
+                        <label for="work-type-filter" class="visually-hidden">Tipo de Trabajo</label>
+                        <select id="work-type-filter" class="filter-select" aria-label="Filtrar por especialidad o tipo de trabajo">
+                            <option value="all">Todos los tipos de trabajo</option>
+                            <option value="Movimiento de Tierras">Movimiento de Tierras</option>
+                            <option value="Carreteras y Compactación">Carreteras y Compactación</option>
+                            <option value="Producción de Concreto">Producción de Concreto</option>
+                            <option value="Acarreo de Minerales">Acarreo de Minerales</option>
+                            <option value="Logística Especializada">Logística Especializada</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Píldoras interactivas de categoría -->
+                <div class="machinery-categories-nav reveal" role="tablist" aria-label="Filtro por categoría de maquinaria">
+                    <button type="button" class="category-pill active" data-category="all" role="tab" aria-selected="true">
+                        <i class="fa-solid fa-border-all"></i> Todas (<span id="count-all">14</span>)
+                    </button>
+                    <button type="button" class="category-pill" data-category="Excavadoras" role="tab" aria-selected="false">
+                        <i class="fa-solid fa-trowel"></i> Excavadoras
+                    </button>
+                    <button type="button" class="category-pill" data-category="Cargadores Frontales" role="tab" aria-selected="false">
+                        <i class="fa-solid fa-gears"></i> Cargadores Frontales
+                    </button>
+                    <button type="button" class="category-pill" data-category="Línea Amarilla" role="tab" aria-selected="false">
+                        <i class="fa-solid fa-tractor"></i> Línea Amarilla
+                    </button>
+                    <button type="button" class="category-pill" data-category="Hormigón y Concreto" role="tab" aria-selected="false">
+                        <i class="fa-solid fa-cubes-stacked"></i> Hormigón (Carmix)
+                    </button>
+                    <button type="button" class="category-pill" data-category="Volquetes y Acarreo" role="tab" aria-selected="false">
+                        <i class="fa-solid fa-truck-ramp-box"></i> Volquetes FMX
+                    </button>
+                    <button type="button" class="category-pill" data-category="Cisternas y MATPEL" role="tab" aria-selected="false">
+                        <i class="fa-solid fa-gas-pump"></i> Cisternas & MATPEL
+                    </button>
+                    <button type="button" class="category-pill" data-category="Transporte Pesado" role="tab" aria-selected="false">
+                        <i class="fa-solid fa-trailer"></i> Cama Baja
+                    </button>
+                </div>
+
+                <!-- Barra de estado y garantías -->
+                <div class="machinery-status-bar reveal">
+                    <span id="machinery-counter-text" class="results-text">Mostrando <strong>14</strong> equipos disponibles</span>
+                    <div class="fleet-guarantees">
+                        <span><i class="fa-solid fa-certificate"></i> Certificación Vigente</span>
+                        <span><i class="fa-solid fa-shield-halved"></i> Pólizas de Seguro Todo Riesgo</span>
+                        <span><i class="fa-solid fa-user-check"></i> Operadores Homologados</span>
+                    </div>
+                </div>
+
+                <!-- Grid interactivo poblado desde maquinaria.json -->
+                <div id="grid-maquinaria" class="machinery-grid" role="region" aria-live="polite">
+                    <!-- Renderizado dinámicamente con JavaScript -->
+                </div>
+
+                <!-- Estado sin resultados -->
+                <div id="no-machinery-found" class="no-results-box" style="display: none;">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <h3>No se encontraron equipos</h3>
+                    <p>No se encontraron resultados para los criterios seleccionados. Intente ajustar el término de búsqueda o categoría.</p>
+                    <button type="button" id="reset-filters-btn" class="btn-reset-filters">Restablecer todos los filtros</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- MODAL DE FICHA TÉCNICA DETALLADA -->
+        <div id="modal-maquina" class="machinery-modal" role="dialog" aria-modal="true" aria-labelledby="modal-machinery-title" aria-hidden="true">
+            <div class="modal-backdrop" id="modal-backdrop"></div>
+            <div class="modal-dialog">
+                <button type="button" class="modal-close-btn" id="modal-close-btn" aria-label="Cerrar ficha técnica">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+                <div class="modal-content" id="modal-machinery-body">
+                    <!-- Inyectado dinámicamente -->
+                </div>
+            </div>
+        </div>
 
         <section id="experiencia" class="section bg-light">
             <div class="container">
@@ -570,6 +674,208 @@
                                 volquetes Volvo FMX, motoniveladoras y mezcladoras autocargables (Carmix), garantizando
                                 alta disponibilidad mecánica.</p>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN: COTIZADOR EN 2 PASOS (SOLICITUD FORMAL & WHATSAPP) -->
+        <section id="cotizador" class="section bg-light">
+            <div class="container">
+                <div class="section-header-centered reveal">
+                    <span class="section-tag"><i class="fa-solid fa-calculator"></i> Cotización en Línea</span>
+                    <h2 class="section-title">Solicite su Cotización Técnica en 2 Pasos</h2>
+                    <p class="section-subtitle">
+                        Complete los datos de su requerimiento para recibir una propuesta técnico-económica formal y personalizada en menos de 24 horas, o canalícela al instante vía WhatsApp.
+                    </p>
+                </div>
+
+                <div class="wizard-container box-shadow reveal">
+                    <!-- Indicador de pasos (Stepper) -->
+                    <div class="wizard-stepper" role="tablist" aria-label="Progreso de la cotización">
+                        <div class="step-indicator active" id="step-nav-1" role="tab" aria-selected="true">
+                            <div class="step-circle">1</div>
+                            <div class="step-label">
+                                <span class="step-num">Paso 1</span>
+                                <span class="step-title">Datos del Solicitante</span>
+                            </div>
+                        </div>
+                        <div class="step-divider" id="step-divider-line"></div>
+                        <div class="step-indicator" id="step-nav-2" role="tab" aria-selected="false">
+                            <div class="step-circle">2</div>
+                            <div class="step-label">
+                                <span class="step-num">Paso 2</span>
+                                <span class="step-title">Requerimiento Técnico</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <form id="quotation-form" class="wizard-form" novalidate>
+                        <!-- PASO 1: Datos del Solicitante -->
+                        <div class="wizard-step active" id="wizard-step-1">
+                            <div class="step-header">
+                                <h3><i class="fa-solid fa-id-badge"></i> Información de Contacto y Empresa</h3>
+                                <p>Ingrese sus datos para formalizar la propuesta técnica.</p>
+                            </div>
+
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="quote-name">Nombres y Apellidos <span class="req">*</span></label>
+                                    <div class="input-icon-wrap">
+                                        <i class="fa-solid fa-user"></i>
+                                        <input type="text" id="quote-name" name="name" required placeholder="Ej. Ing. Carlos Mendoza">
+                                    </div>
+                                    <span class="field-error" id="error-name"></span>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="quote-company">Empresa / Razón Social <span class="req">*</span></label>
+                                    <div class="input-icon-wrap">
+                                        <i class="fa-solid fa-building"></i>
+                                        <input type="text" id="quote-company" name="company" required placeholder="Ej. Minera Aurífera del Norte S.A.">
+                                    </div>
+                                    <span class="field-error" id="error-company"></span>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="quote-ruc">RUC de la Empresa (11 dígitos) <span class="req">*</span></label>
+                                    <div class="input-icon-wrap">
+                                        <i class="fa-solid fa-id-card"></i>
+                                        <input type="text" id="quote-ruc" name="ruc" required maxlength="11" pattern="[0-9]{11}" placeholder="Ej. 20601234567">
+                                    </div>
+                                    <span class="field-error" id="error-ruc"></span>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="quote-phone">Teléfono / WhatsApp de Contacto <span class="req">*</span></label>
+                                    <div class="input-icon-wrap">
+                                        <i class="fa-solid fa-phone"></i>
+                                        <input type="tel" id="quote-phone" name="phone" required placeholder="Ej. 987654321">
+                                    </div>
+                                    <span class="field-error" id="error-phone"></span>
+                                </div>
+
+                                <div class="form-group full-width">
+                                    <label for="quote-email">Correo Electrónico Corporativo <span class="req">*</span></label>
+                                    <div class="input-icon-wrap">
+                                        <i class="fa-solid fa-envelope"></i>
+                                        <input type="email" id="quote-email" name="email" required placeholder="Ej. compras@empresa.com">
+                                    </div>
+                                    <span class="field-error" id="error-email"></span>
+                                </div>
+                            </div>
+
+                            <div class="wizard-actions right-align">
+                                <button type="button" id="btn-next-step" class="btn-wizard-primary">
+                                    Continuar al Requerimiento Técnico <i class="fa-solid fa-arrow-right"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- PASO 2: Requerimiento Técnico -->
+                        <div class="wizard-step" id="wizard-step-2" style="display: none;">
+                            <div class="step-header">
+                                <h3><i class="fa-solid fa-toolbox"></i> Especificaciones de la Operación u Obra</h3>
+                                <p>Detalle el tipo de servicio, equipo y condiciones para dimensionar la cotización.</p>
+                            </div>
+
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="quote-service">Servicio Principal Requerido <span class="req">*</span></label>
+                                    <div class="input-icon-wrap">
+                                        <i class="fa-solid fa-gears"></i>
+                                        <select id="quote-service" name="service" required>
+                                            <option value="">Seleccione el tipo de servicio...</option>
+                                            <option value="Alquiler de Maquinaria Pesada">Alquiler de Maquinaria Pesada</option>
+                                            <option value="Transporte y Carga MATPEL">Transporte Logístico y MATPEL</option>
+                                            <option value="Obras Civiles y Edificaciones">Obras Civiles y Construcción</option>
+                                            <option value="Mantenimiento Vial y Carreteras">Mantenimiento Vial y Carreteras</option>
+                                            <option value="Ingeniería y Montaje Industrial">Ingeniería y Montaje Metalmecánico</option>
+                                        </select>
+                                    </div>
+                                    <span class="field-error" id="error-service"></span>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="quote-machinery">Equipo Específico de Interés</label>
+                                    <div class="input-icon-wrap">
+                                        <i class="fa-solid fa-tractor"></i>
+                                        <select id="quote-machinery" name="machinery">
+                                            <option value="Flota completa / A definir según proyecto">Flota completa / A definir según proyecto</option>
+                                            <!-- Poblado dinámicamente con JavaScript desde maquinaria.json -->
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="quote-location">Ubicación / Región del Proyecto <span class="req">*</span></label>
+                                    <div class="input-icon-wrap">
+                                        <i class="fa-solid fa-location-dot"></i>
+                                        <input type="text" id="quote-location" name="location" required placeholder="Ej. Pataz, Parcoy, Tayabamba / Otra región">
+                                    </div>
+                                    <span class="field-error" id="error-location"></span>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="quote-duration">Duración Estimada del Servicio <span class="req">*</span></label>
+                                    <div class="input-icon-wrap">
+                                        <i class="fa-solid fa-calendar-days"></i>
+                                        <select id="quote-duration" name="duration" required>
+                                            <option value="Menos de 1 mes (Servicio puntual)">Menos de 1 mes (Servicio puntual)</option>
+                                            <option value="1 a 3 meses">1 a 3 meses</option>
+                                            <option value="3 a 6 meses">3 a 6 meses</option>
+                                            <option value="Más de 6 meses (Contrato continuo)" selected>Más de 6 meses (Contrato continuo)</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="quote-start-date">Fecha Estimada de Inicio</label>
+                                    <div class="input-icon-wrap">
+                                        <i class="fa-solid fa-clock"></i>
+                                        <input type="date" id="quote-start-date" name="start_date">
+                                    </div>
+                                </div>
+
+                                <div class="form-group full-width">
+                                    <label for="quote-details">Descripción y Especificaciones del Requerimiento <span class="req">*</span></label>
+                                    <textarea id="quote-details" name="details" rows="3" required placeholder="Indique alcances de obra, tipo de terreno, turnos de trabajo o cualquier especificación técnica..."></textarea>
+                                    <span class="field-error" id="error-details"></span>
+                                </div>
+
+                                <div class="form-group full-width checkbox-group">
+                                    <label class="custom-checkbox-label" for="quote-consent">
+                                        <input type="checkbox" id="quote-consent" name="consent" required checked>
+                                        <span>Autorizo el tratamiento de mis datos de contacto conforme a la política de privacidad para la formulación de la cotización comercial formal.</span>
+                                    </label>
+                                    <span class="field-error" id="error-consent"></span>
+                                </div>
+                            </div>
+
+                            <div class="wizard-actions between-align">
+                                <button type="button" id="btn-prev-step" class="btn-wizard-secondary">
+                                    <i class="fa-solid fa-arrow-left"></i> Modificar Datos de Contacto
+                                </button>
+                                
+                                <div class="submission-btn-group">
+                                    <button type="button" id="btn-send-whatsapp" class="btn-wizard-whatsapp">
+                                        <i class="fa-brands fa-whatsapp"></i> Cotizar al Instante vía WhatsApp
+                                    </button>
+                                    <button type="submit" id="btn-submit-quote" class="btn-wizard-primary">
+                                        <i class="fa-solid fa-paper-plane"></i> Enviar Solicitud por Correo
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+
+                    <!-- Mensaje de éxito post-envío -->
+                    <div id="quote-success-box" class="quote-success-banner" style="display: none;">
+                        <i class="fa-solid fa-circle-check"></i>
+                        <h3>¡Solicitud de Cotización Registrada con Éxito!</h3>
+                        <p>Hemos recibido la información de su proyecto. Un ingeniero residente o asesor técnico comercial de <strong>Inversiones J&F Hrnos S.A.C.</strong> evaluará los requerimientos y le remitirá la propuesta técnico-económica.</p>
+                        <p class="direct-attention">Para atención prioritaria inmediata, comuníquese directamente al <strong>+51 989 401 670</strong>.</p>
+                        <button type="button" id="btn-reset-quote" class="btn-wizard-secondary">Realizar otra cotización</button>
                     </div>
                 </div>
             </div>

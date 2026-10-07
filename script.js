@@ -12,6 +12,8 @@
         initRevealAnimations();
         initFaqAccordion();
         initEmailDeobfuscation();
+        initMachineryCatalog();
+        initQuotationWizard();
     });
 
     /**
@@ -266,17 +268,889 @@
     }
 
     /**
-     * 6. Desofuscación segura de correos electrónicos
+     * 7. Catálogo interactivo de maquinaria pesada, filtros y modal de ficha técnica
      */
-    function initEmailDeobfuscation() {
-        const emailElements = document.querySelectorAll('.obfuscated-email');
-        emailElements.forEach(el => {
-            const user = el.getAttribute('data-user');
-            const domain = el.getAttribute('data-domain');
-            if (user && domain) {
-                const email = `${user}@${domain}`;
-                el.innerHTML = `<a href="mailto:${email}">${email}</a>`;
+    const FLEET_DATA = [
+        {
+            id: "excavadora-volvo-ec300",
+            name: "Excavadora Volvo EC300",
+            category: "Excavadoras",
+            workType: "Movimiento de Tierras",
+            brand: "Volvo",
+            model: "EC300 D/E",
+            year: "2021 - 2023",
+            power: "228 HP / 170 kW",
+            capacity: "2.2 m³",
+            operatingWeight: "31,500 Kg",
+            maxReach: "10.7 m",
+            maxDepth: "7.3 m",
+            desc: "Excavadora hidráulica de servicio pesado diseñada para trabajo minero severo y canteras de alta exigencia. Equipada con tren de rodaje reforzado, pluma y balancín HD, sistema electrohidráulico inteligente de alta eficiencia y cabina ROPS/FOPS certificada.",
+            img: "img/Maquinaria/excavadora-volvo-ec300.webp",
+            applications: [
+                "Excavación en roca y material denso",
+                "Carguío masivo de volquetes FMX",
+                "Perfilado de taludes mineros",
+                "Zanjeo para obras de drenaje e infraestructura"
+            ]
+        },
+        {
+            id: "excavadora-caterpillar-320",
+            name: "Excavadora Caterpillar 320",
+            category: "Excavadoras",
+            workType: "Movimiento de Tierras",
+            brand: "Caterpillar",
+            model: "320 Next Gen",
+            year: "2022 - 2024",
+            power: "158 HP / 117 kW",
+            capacity: "1.8 m³",
+            operatingWeight: "22,500 Kg",
+            maxReach: "9.8 m",
+            maxDepth: "6.7 m",
+            desc: "Equipo de alta precisión y versatilidad con tecnología Cat Connect integrada. Rendimiento excepcional en corte de taludes, defensas ribereñas y desbroce en zonas geográficamente agrestes como la cuenca de Pataz y Parcoy.",
+            img: "img/Maquinaria/excavadora-cat320.webp",
+            applications: [
+                "Desbroce y excavación de bancos",
+                "Defensas ribereñas y encauzamiento de ríos",
+                "Obras civiles y cimentaciones de campamentos",
+                "Carguío continuo de agregados"
+            ]
+        },
+        {
+            id: "cargador-volvo-l150g",
+            name: "Cargador Frontal Volvo L150G",
+            category: "Cargadores Frontales",
+            workType: "Movimiento de Tierras",
+            brand: "Volvo",
+            model: "L150G",
+            year: "2020 - 2023",
+            power: "300 HP / 220 kW",
+            capacity: "4.2 m³",
+            operatingWeight: "26,100 Kg",
+            maxReach: "4.1 m",
+            maxDepth: "N/A",
+            desc: "Cargador sobre ruedas de alto tonelaje para acopio y manipulación ágil de mineral en plantas de beneficio y chancado. Su cinemática TP patentada por Volvo proporciona alto par de desprendimiento en todo el rango de elevación.",
+            img: "img/Maquinaria/cargador-volvo-l150g.webp",
+            applications: [
+                "Alimentación continua de tolvas y chancadoras",
+                "Carguío rápido de volquetes de 20 m³",
+                "Acopio de mineral y agregados clasificados",
+                "Mantenimiento y despeje de frentes de tajo"
+            ]
+        },
+        {
+            id: "cargador-komatsu-wa380",
+            name: "Cargador Frontal Komatsu WA380-6",
+            category: "Cargadores Frontales",
+            workType: "Movimiento de Tierras",
+            brand: "Komatsu",
+            model: "WA380-6",
+            year: "2021 - 2023",
+            power: "191 HP / 142 kW",
+            capacity: "3.5 m³",
+            operatingWeight: "18,500 Kg",
+            maxReach: "3.9 m",
+            maxDepth: "N/A",
+            desc: "Equipo robusto y confiable con transmisión hidrostática y convertidor de par con traba automática. Excelente estabilidad y radio de giro reducido, idóneo para patios de maniobra en campamentos y plataformas mineras.",
+            img: "img/Maquinaria/cargador-komatsu.webp",
+            applications: [
+                "Carguío de agregados en canteras",
+                "Movimiento de materiales en patios de acopio",
+                "Apoyo en obras civiles y viales",
+                "Despeje de accesos industriales"
+            ]
+        },
+        {
+            id: "retroexcavadora-cat-420f",
+            name: "Retroexcavadora Caterpillar 420F",
+            category: "Línea Amarilla",
+            workType: "Carreteras y Compactación",
+            brand: "Caterpillar",
+            model: "420F IT 4x4",
+            year: "2021 - 2024",
+            power: "93 HP / 69 kW",
+            capacity: "1.0 m³ frontal / 0.24 m³ posterior",
+            operatingWeight: "11,000 Kg",
+            maxReach: "6.2 m",
+            maxDepth: "5.4 m extendida",
+            desc: "Unidad versátil con tracción 4x4, brazo extensible y enganche rápido hidráulico. Diseñada para operar en espacios confinados, mantenimiento de cunetas y apertura de zanjas para servicios en campamentos e interior mina.",
+            img: "img/Maquinaria/retroexcavadora-cat420f.webp",
+            applications: [
+                "Apertura y limpieza de cunetas viales",
+                "Excavación de zanjas para tuberías y ductos",
+                "Carguío ligero y nivelación de terrenos",
+                "Demolición y mantenimiento de plataformas"
+            ]
+        },
+        {
+            id: "motoniveladora-cat-140h",
+            name: "Motoniveladora Caterpillar 140H",
+            category: "Línea Amarilla",
+            workType: "Carreteras y Compactación",
+            brand: "Caterpillar",
+            model: "140H VHP",
+            year: "2020 - 2023",
+            power: "185 HP / 138 kW",
+            capacity: "Vertedera de 4.3 m (14 ft)",
+            operatingWeight: "15,800 Kg",
+            maxReach: "2.2 m lateral",
+            maxDepth: "0.7 m corte",
+            desc: "Equipo especializado en conformación de rasantes, cunetas y bombeo en vías de penetración. Fundamental en nuestro servicio de mantenimiento vial periódico en las rutas Tayabamba, Parcoy y anexos mineros.",
+            img: "img/Maquinaria/motoniveladora-cat140h.webp",
+            applications: [
+                "Perfilado y compactación de rasantes",
+                "Conformación de cunetas y taludes laterales",
+                "Mantenimiento rutinario de carreteras no pavimentadas",
+                "Esparcido uniforme de material de afirmado"
+            ]
+        },
+        {
+            id: "rodillo-bomag-compactador",
+            name: "Rodillo Compactador Bomag",
+            category: "Línea Amarilla",
+            workType: "Carreteras y Compactación",
+            brand: "Bomag",
+            model: "BW 211 D-40",
+            year: "2021 - 2023",
+            power: "134 HP / 100 kW",
+            capacity: "Ancho de rolo: 2,130 mm",
+            operatingWeight: "12,200 Kg",
+            maxReach: "N/A",
+            maxDepth: "N/A",
+            desc: "Rodillo vibratorio monocilíndrico con tracción en el tambor y neumáticos de alta adherencia. Logra densidades Proctor óptimas en bases granulares, subrasantes y terraplenes de gran espesor.",
+            img: "img/Maquinaria/rodillo-compactador.webp",
+            applications: [
+                "Compactación de terraplenes y pedraplenes",
+                "Afirmado de vías departamentales y mineras",
+                "Preparación de subrasante para losas de concreto",
+                "Estabilización de accesos y botaderos"
+            ]
+        },
+        {
+            id: "minicargador-cat-246c",
+            name: "Mini Cargador Caterpillar 246C",
+            category: "Línea Amarilla",
+            workType: "Movimiento de Tierras",
+            brand: "Caterpillar",
+            model: "246C High Flow",
+            year: "2021 - 2023",
+            power: "74 HP / 55 kW",
+            capacity: "0.45 m³",
+            operatingWeight: "3,400 Kg",
+            maxReach: "3.1 m elevación",
+            maxDepth: "N/A",
+            desc: "Equipo compacto de alta maniobrabilidad con sistema hidráulico de alto caudal. Ideal para tareas auxiliares en plantas concentradoras, interior mina, limpieza debajo de fajas y espacios reducidos.",
+            img: "img/Maquinaria/minicargador-cat246c.webp",
+            applications: [
+                "Limpieza bajo fajas transportadoras y tolvas",
+                "Movimiento de materiales en espacios reducidos",
+                "Mantenimiento dentro de plantas industriales",
+                "Carguío ágil en obras de albañilería y pisos"
+            ]
+        },
+        {
+            id: "autohormigonera-carmix-35",
+            name: "Auto Hormigonera Carmix 3.5 TT",
+            category: "Hormigón y Concreto",
+            workType: "Producción de Concreto",
+            brand: "Carmix",
+            model: "3.5 TT 4x4x4",
+            year: "2022 - 2024",
+            power: "111 HP / 83 kW",
+            capacity: "3,500 L por ciclo (14 m³/h)",
+            operatingWeight: "7,400 Kg vacío",
+            maxReach: "Descarga 300°",
+            maxDepth: "N/A",
+            desc: "Planta de concreto móvil autocargable todo terreno con tracción y dirección en las 4 ruedas. Equipada con sistema de pesaje computarizado (Joyload) para dosificación exacta de agregados, cemento y aditivos en zonas remotas.",
+            img: "img/Maquinaria/carmix-35.webp",
+            applications: [
+                "Producción de concreto estructural in situ",
+                "Vaciado de muros de contención en zonas agrestes",
+                "Bases de molinos, tanques y naves industriales",
+                "Obras de arte y pontones en carreteras"
+            ]
+        },
+        {
+            id: "volquete-volvo-fmx-20m3",
+            name: "Volquete Volvo FMX 8x4 / 6x4",
+            category: "Volquetes y Acarreo",
+            workType: "Acarreo de Minerales",
+            brand: "Volvo",
+            model: "FMX 480 / 500",
+            year: "2022 - 2024",
+            power: "480 - 500 HP",
+            capacity: "Tolva roquera 15 m³ y 20 m³",
+            operatingWeight: "Carga útil: 32,000 Kg",
+            maxReach: "N/A",
+            maxDepth: "N/A",
+            desc: "Flota de volquetes pesados diseñada específicamente para la minería subterránea y de tajo en carreteras de altura. Ejes reductores de cubo, freno de motor VEB+ y tolva semirroquera antiabrasiva para máximo rendimiento.",
+            img: "img/Maquinaria/volquete-volvo-fmx.webp",
+            applications: [
+                "Acarreo masivo de mineral (mena y desmonte)",
+                "Transporte de agregados desde cantera a planta",
+                "Movimiento de tierras en obras de infraestructura",
+                "Soporte en proyectos de estabilización de taludes"
+            ]
+        },
+        {
+            id: "camabaja-transporte-40tn",
+            name: "Cama Baja de 40 Toneladas",
+            category: "Transporte Pesado",
+            workType: "Logística Especializada",
+            brand: "Volvo / Kenworth",
+            model: "Tracto 6x4 + Plataforma Cuello Desmontable",
+            year: "2021 - 2024",
+            power: "480 HP",
+            capacity: "40 Toneladas de carga útil",
+            operatingWeight: "Plataforma 12.5 m",
+            maxReach: "Largo: 12.5 m",
+            maxDepth: "N/A",
+            desc: "Unidad de transporte especializada para movilizar maquinaria de línea amarilla (excavadoras, cargadores, rodillos) e infraestructura sobredimensionada hacia los campamentos mineros de la cordillera andina.",
+            img: "img/Maquinaria/camabaja-transporte.webp",
+            applications: [
+                "Traslado de excavadoras Volvo EC300 y Cat 320",
+                "Movilización de grúas y maquinaria pesada",
+                "Transporte de estructuras metálicas sobredimensionadas",
+                "Gestión de rutas con escoltas y permisos MTC"
+            ]
+        },
+        {
+            id: "cisterna-combustible-9000",
+            name: "Cisterna de Combustibles 9,000 Gln (MATPEL)",
+            category: "Cisternas y MATPEL",
+            workType: "Logística Especializada",
+            brand: "Volvo FMX",
+            model: "Encapsulada 4 Compartimientos",
+            year: "2021 - 2024",
+            power: "440 HP",
+            capacity: "9,000 Galones (34,000 L)",
+            operatingWeight: "Conforme pesos MTC",
+            maxReach: "4 compartimientos",
+            maxDepth: "N/A",
+            desc: "Cisterna especializada para el transporte terrestre seguro de hidrocarburos y materiales peligrosos en la ruta Trujillo - Pataz. Cuenta con inscripción DGT-MTC, válvula de fondo neumática, recuperación de vapores y GPS en tiempo real.",
+            img: "img/Maquinaria/cisterna-9000.webp",
+            applications: [
+                "Abastecimiento ininterrumpido de diésel B5 S-50 a minas",
+                "Transporte seguro de combustibles en ruta nacional",
+                "Conductores homologados categoría especial A-IV",
+                "Planes de contingencia ambiental y seguros vigentes"
+            ]
+        },
+        {
+            id: "cisterna-surtidor-2600",
+            name: "Cisterna Surtidor de Combustible 2,600 Gln",
+            category: "Cisternas y MATPEL",
+            workType: "Logística Especializada",
+            brand: "Volvo / Hino",
+            model: "Cisterna con Surtidor y Contador Digital",
+            year: "2022 - 2024",
+            power: "280 HP",
+            capacity: "2,600 Galones (9,800 L)",
+            operatingWeight: "N/A",
+            maxReach: "Manguera retráctil 30m",
+            maxDepth: "N/A",
+            desc: "Unidad móvil para abastecimiento directo de combustible pie de obra a excavadoras, cargadores y volquetes en frentes de trabajo remotos, evitando traslados innecesarios y paradas operativas.",
+            img: "img/Maquinaria/cisterna-surtidor.webp",
+            applications: [
+                "Abastecimiento directo en frentes de corte y canteras",
+                "Suministro de diésel a generadores y compresoras",
+                "Control volumétrico digital de despacho",
+                "Operación ágil en accesos estrechos"
+            ]
+        },
+        {
+            id: "cisterna-regadora-agua",
+            name: "Cisterna Regadora de Agua",
+            category: "Cisternas y MATPEL",
+            workType: "Carreteras y Compactación",
+            brand: "Volvo / MB",
+            model: "Tanque Elíptico con Flauta y Cañón",
+            year: "2021 - 2023",
+            power: "330 HP",
+            capacity: "4,000 - 5,000 Galones (19,000 L)",
+            operatingWeight: "N/A",
+            maxReach: "Ancho riego: 8 m",
+            maxDepth: "N/A",
+            desc: "Cisterna de alta capacidad equipada con motobomba de alto caudal, flauta regadora posterior y cañón superior regulable. Indispensable para el humedecimiento de bases en compactación y mitigación de polvo en caminos mineros.",
+            img: "img/Maquinaria/cisterna-regadora.webp",
+            applications: [
+                "Humedecimiento de material granular en compactación vial",
+                "Mitigación y supresión de polvo en accesos mineros",
+                "Abastecimiento de agua para autohormigoneras Carmix",
+                "Apoyo en lavado de plantas industriales"
+            ]
+        }
+    ];
+
+    function initMachineryCatalog() {
+        const grid = document.getElementById('grid-maquinaria');
+        if (!grid) return;
+
+        const searchInput = document.getElementById('machinery-search');
+        const searchClearBtn = document.getElementById('search-clear-btn');
+        const workTypeFilter = document.getElementById('work-type-filter');
+        const categoryPills = document.querySelectorAll('.category-pill');
+        const counterText = document.getElementById('machinery-counter-text');
+        const noResultsBox = document.getElementById('no-machinery-found');
+        const resetFiltersBtn = document.getElementById('reset-filters-btn');
+
+        // Modal elements
+        const modal = document.getElementById('modal-maquina');
+        const modalBody = document.getElementById('modal-machinery-body');
+        const modalCloseBtn = document.getElementById('modal-close-btn');
+        const modalBackdrop = document.getElementById('modal-backdrop');
+
+        let currentCategory = 'all';
+        let currentWorkType = 'all';
+        let currentSearchQuery = '';
+
+        // Función para renderizar tarjetas
+        const renderCatalog = (items) => {
+            grid.innerHTML = '';
+
+            if (items.length === 0) {
+                noResultsBox.style.display = 'block';
+                if (counterText) counterText.innerHTML = `Mostrando <strong>0</strong> de ${FLEET_DATA.length} equipos`;
+                return;
+            }
+
+            noResultsBox.style.display = 'none';
+            if (counterText) counterText.innerHTML = `Mostrando <strong>${items.length}</strong> de ${FLEET_DATA.length} equipos disponibles`;
+
+            items.forEach(item => {
+                const card = document.createElement('article');
+                card.className = 'machinery-card';
+                card.setAttribute('data-id', item.id);
+
+                card.innerHTML = `
+                    <div class="machinery-card-media">
+                        <img src="${item.img}" alt="${item.name}" width="600" height="375" loading="lazy" decoding="async">
+                        <div class="card-badges">
+                            <span class="badge-brand">${item.brand}</span>
+                            <span class="badge-available">Disponible</span>
+                        </div>
+                    </div>
+                    <div class="machinery-card-body">
+                        <span class="card-meta-category">${item.category}</span>
+                        <h3 class="machinery-card-title">${item.name}</h3>
+                        <p class="machinery-card-model">Modelo: <strong>${item.model}</strong> (${item.year})</p>
+                        <div class="machinery-specs-summary">
+                            <div class="spec-cell">
+                                <span class="spec-cell-label">Potencia</span>
+                                <span class="spec-cell-value">${item.power.split('/')[0].trim()}</span>
+                            </div>
+                            <div class="spec-cell">
+                                <span class="spec-cell-label">Capacidad</span>
+                                <span class="spec-cell-value">${item.capacity.split('(')[0].trim()}</span>
+                            </div>
+                            <div class="spec-cell">
+                                <span class="spec-cell-label">Peso Op.</span>
+                                <span class="spec-cell-value">${item.operatingWeight.split('(')[0].trim()}</span>
+                            </div>
+                        </div>
+                        <p class="machinery-card-desc">${item.desc}</p>
+                        <div class="machinery-card-actions">
+                            <button type="button" class="btn-card-spec" data-action="view-spec" data-id="${item.id}" aria-label="Ver ficha técnica de ${item.name}">
+                                <i class="fa-solid fa-file-lines" aria-hidden="true"></i> Ficha Técnica
+                            </button>
+                            <button type="button" class="btn-card-quote" data-action="quote-machine" data-id="${item.id}" aria-label="Cotizar ${item.name}">
+                                <i class="fa-solid fa-calculator" aria-hidden="true"></i> Cotizar
+                            </button>
+                        </div>
+                    </div>
+                `;
+
+                grid.appendChild(card);
+            });
+        };
+
+        // Función de filtrado multidimensional
+        const filterFleet = () => {
+            const query = currentSearchQuery.toLowerCase().trim();
+
+            const filtered = FLEET_DATA.filter(item => {
+                // Filtro por categoría
+                const matchesCategory = currentCategory === 'all' || item.category === currentCategory;
+
+                // Filtro por tipo de trabajo
+                const matchesWorkType = currentWorkType === 'all' || item.workType === currentWorkType;
+
+                // Filtro por texto de búsqueda
+                const matchesSearch = !query || 
+                    item.name.toLowerCase().includes(query) ||
+                    item.brand.toLowerCase().includes(query) ||
+                    item.model.toLowerCase().includes(query) ||
+                    item.category.toLowerCase().includes(query) ||
+                    item.desc.toLowerCase().includes(query) ||
+                    item.capacity.toLowerCase().includes(query);
+
+                return matchesCategory && matchesWorkType && matchesSearch;
+            });
+
+            renderCatalog(filtered);
+        };
+
+        // Event Listeners para búsqueda
+        if (searchInput) {
+            let debounceTimer = null;
+            searchInput.addEventListener('input', (e) => {
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(() => {
+                    currentSearchQuery = e.target.value;
+                    if (searchClearBtn) {
+                        searchClearBtn.style.display = currentSearchQuery ? 'block' : 'none';
+                    }
+                    filterFleet();
+                }, 150);
+            });
+        }
+
+        if (searchClearBtn) {
+            searchClearBtn.addEventListener('click', () => {
+                if (searchInput) {
+                    searchInput.value = '';
+                    currentSearchQuery = '';
+                    searchClearBtn.style.display = 'none';
+                    filterFleet();
+                    searchInput.focus();
+                }
+            });
+        }
+
+        // Filtro por píldoras de categoría
+        categoryPills.forEach(pill => {
+            pill.addEventListener('click', () => {
+                categoryPills.forEach(p => {
+                    p.classList.remove('active');
+                    p.setAttribute('aria-selected', 'false');
+                });
+                pill.classList.add('active');
+                pill.setAttribute('aria-selected', 'true');
+                currentCategory = pill.getAttribute('data-category');
+                filterFleet();
+            });
+        });
+
+        // Filtro por tipo de trabajo
+        if (workTypeFilter) {
+            workTypeFilter.addEventListener('change', (e) => {
+                currentWorkType = e.target.value;
+                filterFleet();
+            });
+        }
+
+        // Botón de restablecer filtros
+        if (resetFiltersBtn) {
+            resetFiltersBtn.addEventListener('click', () => {
+                if (searchInput) {
+                    searchInput.value = '';
+                    currentSearchQuery = '';
+                    if (searchClearBtn) searchClearBtn.style.display = 'none';
+                }
+                if (workTypeFilter) {
+                    workTypeFilter.value = 'all';
+                    currentWorkType = 'all';
+                }
+                categoryPills.forEach(p => {
+                    const isAll = p.getAttribute('data-category') === 'all';
+                    p.classList.toggle('active', isAll);
+                    p.setAttribute('aria-selected', isAll ? 'true' : 'false');
+                });
+                currentCategory = 'all';
+                filterFleet();
+            });
+        }
+
+        // Delegación de eventos para clicks en Ficha Técnica y Cotizar
+        grid.addEventListener('click', (e) => {
+            const specBtn = e.target.closest('[data-action="view-spec"]');
+            const quoteBtn = e.target.closest('[data-action="quote-machine"]');
+
+            if (specBtn) {
+                const machineId = specBtn.getAttribute('data-id');
+                openMachineModal(machineId);
+            } else if (quoteBtn) {
+                const machineId = quoteBtn.getAttribute('data-id');
+                quoteDirectMachine(machineId);
             }
         });
+
+        // Apertura de modal con datos del equipo
+        const openMachineModal = (machineId) => {
+            const machine = FLEET_DATA.find(m => m.id === machineId);
+            if (!machine || !modal || !modalBody) return;
+
+            modalBody.innerHTML = `
+                <div class="modal-content-grid">
+                    <div class="modal-media-col">
+                        <div class="modal-img-wrapper">
+                            <img src="${machine.img}" alt="${machine.name}" width="600" height="400">
+                        </div>
+                        <div class="modal-badges-row">
+                            <span class="badge-brand">${machine.brand}</span>
+                            <span class="badge-available">Disponible en Flota</span>
+                        </div>
+                        <div class="modal-actions-group" style="margin-top: 15px;">
+                            <button type="button" class="btn-modal-quote" id="modal-btn-quote" data-id="${machine.id}">
+                                <i class="fa-solid fa-calculator"></i> Cotizar Este Equipo
+                            </button>
+                            <a href="https://wa.me/51989401670?text=${encodeURIComponent('Hola Inversiones J&F, deseo cotizar la ' + machine.name + ' (' + machine.model + ') para una obra.')}" 
+                               target="_blank" rel="noopener" class="btn-modal-whatsapp">
+                                <i class="fa-brands fa-whatsapp"></i> WhatsApp Directo
+                            </a>
+                        </div>
+                    </div>
+                    <div class="modal-info-col">
+                        <h3 id="modal-machinery-title">${machine.name}</h3>
+                        <p class="modal-machine-subtitle">${machine.category} &bull; Modelo ${machine.model} (${machine.year})</p>
+                        <p class="modal-machine-desc">${machine.desc}</p>
+                        
+                        <table class="modal-spec-table" aria-label="Especificaciones Técnicas">
+                            <tbody>
+                                <tr><th>Marca y Modelo</th><td>${machine.brand} / ${machine.model}</td></tr>
+                                <tr><th>Potencia de Motor</th><td>${machine.power}</td></tr>
+                                <tr><th>Capacidad Operativa</th><td>${machine.capacity}</td></tr>
+                                <tr><th>Peso Operativo</th><td>${machine.operatingWeight}</td></tr>
+                                <tr><th>Alcance Máximo</th><td>${machine.maxReach}</td></tr>
+                                <tr><th>Profundidad Máx.</th><td>${machine.maxDepth}</td></tr>
+                            </tbody>
+                        </table>
+
+                        <h4 class="modal-applications-title"><i class="fa-solid fa-check-circle" style="color: var(--blue-accent);"></i> Aplicaciones en Terreno:</h4>
+                        <ul class="modal-applications-list">
+                            ${machine.applications.map(app => `<li><i class="fa-solid fa-check"></i> <span>${app}</span></li>`).join('')}
+                        </ul>
+                    </div>
+                </div>
+            `;
+
+            // Vincular acción de cotizar desde dentro del modal
+            const innerQuoteBtn = modalBody.querySelector('#modal-btn-quote');
+            if (innerQuoteBtn) {
+                innerQuoteBtn.addEventListener('click', () => {
+                    closeMachineModal();
+                    quoteDirectMachine(machine.id);
+                });
+            }
+
+            modal.style.display = 'flex';
+            modal.classList.add('active');
+            modal.setAttribute('aria-hidden', 'false');
+            document.body.style.overflow = 'hidden';
+            if (modalCloseBtn) modalCloseBtn.focus();
+        };
+
+        const closeMachineModal = () => {
+            if (!modal) return;
+            modal.classList.remove('active');
+            modal.style.display = 'none';
+            modal.setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = '';
+        };
+
+        if (modalCloseBtn) modalCloseBtn.addEventListener('click', closeMachineModal);
+        if (modalBackdrop) modalBackdrop.addEventListener('click', closeMachineModal);
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && modal && modal.classList.contains('active')) {
+                closeMachineModal();
+            }
+        });
+
+        // Cotizar directamente un equipo (selección y scroll al cotizador)
+        const quoteDirectMachine = (machineId) => {
+            const machine = FLEET_DATA.find(m => m.id === machineId);
+            const machinerySelect = document.getElementById('quote-machinery');
+            const serviceSelect = document.getElementById('quote-service');
+            const quotationSection = document.getElementById('cotizador');
+
+            if (machinerySelect && machine) {
+                machinerySelect.value = machine.name;
+            }
+            if (serviceSelect) {
+                serviceSelect.value = 'Alquiler de Maquinaria Pesada';
+            }
+
+            if (quotationSection) {
+                quotationSection.scrollIntoView({ behavior: 'smooth' });
+                // Enfocar el primer campo del cotizador
+                setTimeout(() => {
+                    const firstInput = document.getElementById('quote-name');
+                    if (firstInput) firstInput.focus();
+                }, 600);
+            }
+        };
+
+        // Renderizado inicial
+        renderCatalog(FLEET_DATA);
+    }
+
+    /**
+     * 8. Asistente de cotización en 2 pasos con validación estricta y canalización WhatsApp
+     */
+    function initQuotationWizard() {
+        const form = document.getElementById('quotation-form');
+        if (!form) return;
+
+        const step1 = document.getElementById('wizard-step-1');
+        const step2 = document.getElementById('wizard-step-2');
+        const stepNav1 = document.getElementById('step-nav-1');
+        const stepNav2 = document.getElementById('step-nav-2');
+        const stepDivider = document.getElementById('step-divider-line');
+        const btnNext = document.getElementById('btn-next-step');
+        const btnPrev = document.getElementById('btn-prev-step');
+        const btnWhatsApp = document.getElementById('btn-send-whatsapp');
+        const successBox = document.getElementById('quote-success-box');
+        const btnReset = document.getElementById('btn-reset-quote');
+        const machinerySelect = document.getElementById('quote-machinery');
+
+        // Poblar selector de equipos desde FLEET_DATA
+        if (machinerySelect) {
+            FLEET_DATA.forEach(machine => {
+                const opt = document.createElement('option');
+                opt.value = machine.name;
+                opt.textContent = `${machine.name} (${machine.category})`;
+                machinerySelect.appendChild(opt);
+            });
+        }
+
+        // Helpers de validación
+        const setFieldError = (inputId, errorId, message) => {
+            const input = document.getElementById(inputId);
+            const errorSpan = document.getElementById(errorId);
+            if (input) {
+                const wrap = input.closest('.input-icon-wrap') || input.closest('.form-group');
+                if (wrap) wrap.classList.add('has-error');
+            }
+            if (errorSpan) errorSpan.textContent = message;
+        };
+
+        const clearFieldError = (inputId, errorId) => {
+            const input = document.getElementById(inputId);
+            const errorSpan = document.getElementById(errorId);
+            if (input) {
+                const wrap = input.closest('.input-icon-wrap') || input.closest('.form-group');
+                if (wrap) wrap.classList.remove('has-error');
+            }
+            if (errorSpan) errorSpan.textContent = '';
+        };
+
+        const validateStep1 = () => {
+            let isValid = true;
+            const name = document.getElementById('quote-name').value.trim();
+            const company = document.getElementById('quote-company').value.trim();
+            const ruc = document.getElementById('quote-ruc').value.trim();
+            const phone = document.getElementById('quote-phone').value.trim();
+            const email = document.getElementById('quote-email').value.trim();
+
+            if (!name || name.length < 3) {
+                setFieldError('quote-name', 'error-name', 'Por favor ingrese su nombre y apellido.');
+                isValid = false;
+            } else {
+                clearFieldError('quote-name', 'error-name');
+            }
+
+            if (!company || company.length < 2) {
+                setFieldError('quote-company', 'error-company', 'Por favor ingrese la razón social o empresa.');
+                isValid = false;
+            } else {
+                clearFieldError('quote-company', 'error-company');
+            }
+
+            const rucRegex = /^\d{11}$/;
+            if (!ruc || !rucRegex.test(ruc)) {
+                setFieldError('quote-ruc', 'error-ruc', 'El RUC debe ser un número válido de 11 dígitos.');
+                isValid = false;
+            } else {
+                clearFieldError('quote-ruc', 'error-ruc');
+            }
+
+            if (!phone || phone.length < 7) {
+                setFieldError('quote-phone', 'error-phone', 'Ingrese un teléfono o WhatsApp de contacto válido.');
+                isValid = false;
+            } else {
+                clearFieldError('quote-phone', 'error-phone');
+            }
+
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!email || !emailRegex.test(email)) {
+                setFieldError('quote-email', 'error-email', 'Ingrese un correo electrónico corporativo válido.');
+                isValid = false;
+            } else {
+                clearFieldError('quote-email', 'error-email');
+            }
+
+            return isValid;
+        };
+
+        const validateStep2 = () => {
+            let isValid = true;
+            const service = document.getElementById('quote-service').value;
+            const location = document.getElementById('quote-location').value.trim();
+            const details = document.getElementById('quote-details').value.trim();
+            const consent = document.getElementById('quote-consent').checked;
+
+            if (!service) {
+                setFieldError('quote-service', 'error-service', 'Seleccione el servicio requerido.');
+                isValid = false;
+            } else {
+                clearFieldError('quote-service', 'error-service');
+            }
+
+            if (!location || location.length < 3) {
+                setFieldError('quote-location', 'error-location', 'Indique la ubicación o departamento del proyecto.');
+                isValid = false;
+            } else {
+                clearFieldError('quote-location', 'error-location');
+            }
+
+            if (!details || details.length < 10) {
+                setFieldError('quote-details', 'error-details', 'Detalle brevemente el requerimiento (mínimo 10 caracteres).');
+                isValid = false;
+            } else {
+                clearFieldError('quote-details', 'error-details');
+            }
+
+            if (!consent) {
+                setFieldError('quote-consent', 'error-consent', 'Debe aceptar los términos para tramitar la cotización.');
+                isValid = false;
+            } else {
+                clearFieldError('quote-consent', 'error-consent');
+            }
+
+            return isValid;
+        };
+
+        // Navegación Paso 1 -> Paso 2
+        if (btnNext) {
+            btnNext.addEventListener('click', () => {
+                if (!validateStep1()) return;
+
+                step1.style.display = 'none';
+                step2.style.display = 'block';
+
+                stepNav1.classList.remove('active');
+                stepNav1.classList.add('completed');
+                stepNav1.querySelector('.step-circle').innerHTML = '<i class="fa-solid fa-check"></i>';
+
+                stepNav2.classList.add('active');
+                stepNav2.setAttribute('aria-selected', 'true');
+                if (stepDivider) stepDivider.classList.add('active');
+            });
+        }
+
+        // Navegación Paso 2 -> Paso 1
+        if (btnPrev) {
+            btnPrev.addEventListener('click', () => {
+                step2.style.display = 'none';
+                step1.style.display = 'block';
+
+                stepNav2.classList.remove('active');
+                stepNav2.setAttribute('aria-selected', 'false');
+
+                stepNav1.classList.remove('completed');
+                stepNav1.classList.add('active');
+                stepNav1.querySelector('.step-circle').textContent = '1';
+
+                if (stepDivider) stepDivider.classList.remove('active');
+            });
+        }
+
+        // Generador de Mensaje y Apertura de WhatsApp
+        const generateWhatsAppQuote = () => {
+            const isStep1Valid = validateStep1();
+            if (!isStep1Valid) {
+                // Volver a paso 1 si falta información
+                step2.style.display = 'none';
+                step1.style.display = 'block';
+                stepNav2.classList.remove('active');
+                stepNav1.classList.add('active');
+                return;
+            }
+
+            const isStep2Valid = validateStep2();
+            if (!isStep2Valid) return;
+
+            const name = document.getElementById('quote-name').value.trim();
+            const company = document.getElementById('quote-company').value.trim();
+            const ruc = document.getElementById('quote-ruc').value.trim();
+            const phone = document.getElementById('quote-phone').value.trim();
+            const email = document.getElementById('quote-email').value.trim();
+
+            const service = document.getElementById('quote-service').value;
+            const machinery = document.getElementById('quote-machinery').value;
+            const location = document.getElementById('quote-location').value.trim();
+            const duration = document.getElementById('quote-duration').value;
+            const startDate = document.getElementById('quote-start-date').value || 'A definir / Inmediata';
+            const details = document.getElementById('quote-details').value.trim();
+
+            const message = `*SOLICITUD DE COTIZACIÓN - INVERSIONES J&F HRNOS*
+━━━━━━━━━━━━━━━━━━━━
+*DATOS DEL SOLICITANTE:*
+👤 *Contacto:* ${name}
+🏢 *Empresa:* ${company}
+📋 *RUC:* ${ruc}
+📞 *Teléfono:* ${phone}
+✉️ *Correo:* ${email}
+
+*REQUERIMIENTO TÉCNICO:*
+⚙️ *Servicio:* ${service}
+🚜 *Equipo:* ${machinery}
+📍 *Ubicación de Obra:* ${location}
+⏱️ *Duración:* ${duration}
+📅 *Fecha Inicio:* ${startDate}
+
+*DETALLES Y ALCANCE:*
+${details}
+━━━━━━━━━━━━━━━━━━━━
+_Enviado desde el portal oficial inversionesjyf.com_`;
+
+            const whatsappUrl = `https://wa.me/51989401670?text=${encodeURIComponent(message)}`;
+            window.open(whatsappUrl, '_blank', 'noopener');
+        };
+
+        if (btnWhatsApp) {
+            btnWhatsApp.addEventListener('click', generateWhatsAppQuote);
+        }
+
+        // Envío formal de formulario
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            if (!validateStep1() || !validateStep2()) return;
+
+            const name = document.getElementById('quote-name').value.trim();
+            const company = document.getElementById('quote-company').value.trim();
+            const service = document.getElementById('quote-service').value;
+            const machinery = document.getElementById('quote-machinery').value;
+
+            // Abrir mailto formal pre-llenado
+            const subject = encodeURIComponent(`Solicitud Cotización: ${service} - ${company}`);
+            const body = encodeURIComponent(`Estimados Inversiones J&F Hrnos S.A.C.,\n\nPor medio de la presente, solicitamos cotización formal para el proyecto:\n\n- Solicitante: ${name}\n- Empresa: ${company}\n- Servicio: ${service}\n- Equipo requerido: ${machinery}\n\nQuedamos a la espera de su propuesta técnico-económica.`);
+            window.location.href = `mailto:residencia@inversionesjyf.com?cc=gerencia@inversionesjyf.com&subject=${subject}&body=${body}`;
+
+            // Mostrar estado de éxito en pantalla
+            form.style.display = 'none';
+            if (successBox) successBox.style.display = 'block';
+        });
+
+        // Restablecer asistente
+        if (btnReset) {
+            btnReset.addEventListener('click', () => {
+                form.reset();
+                if (successBox) successBox.style.display = 'none';
+                form.style.display = 'block';
+                step2.style.display = 'none';
+                step1.style.display = 'block';
+
+                stepNav1.classList.remove('completed');
+                stepNav1.classList.add('active');
+                stepNav1.querySelector('.step-circle').textContent = '1';
+
+                stepNav2.classList.remove('active');
+                stepNav2.setAttribute('aria-selected', 'false');
+
+                if (stepDivider) stepDivider.classList.remove('active');
+            });
+        }
     }
 })();
