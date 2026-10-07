@@ -223,6 +223,11 @@ h1, h2, h3, h4, .navbar a {
     transform: translateY(-2px);
 }
 
+.navbar a.active {
+    color: var(--blue-accent);
+    border-bottom: 2px solid var(--blue-accent);
+}
+
 /* =========================================
    SLIDER HERO
    ========================================= */
@@ -2293,5 +2298,406 @@ h1, h2, h3, h4, .navbar a {
     .btn-wizard-whatsapp {
         width: 100%;
         justify-content: center;
+    }
+}
+
+/* =========================================
+   ESTILOS GENERALES MULTI-PÁGINA
+   ========================================= */
+.page-hero {
+    background: linear-gradient(135deg, rgba(0, 26, 51, 0.9) 0%, rgba(0, 51, 102, 0.85) 100%), url('img/Inicio/hero-1.webp') center/cover no-repeat;
+    color: var(--white);
+    padding: 70px 0 50px 0;
+    text-align: center;
+    position: relative;
+    border-bottom: 4px solid var(--blue-accent);
+}
+
+.page-hero-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 2.6rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+    letter-spacing: -0.5px;
+}
+
+.page-hero-subtitle {
+    font-size: 1.1rem;
+    max-width: 780px;
+    margin: 0 auto 20px auto;
+    color: #e2e8f0;
+    line-height: 1.6;
+}
+
+.breadcrumb-nav {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(6px);
+    padding: 6px 18px;
+    border-radius: 20px;
+    font-size: 0.88rem;
+    font-weight: 500;
+}
+
+.breadcrumb-nav a {
+    color: #e2e8f0;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.breadcrumb-nav a:hover {
+    color: var(--white);
+    text-decoration: underline;
+}
+
+.breadcrumb-nav span {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.breadcrumb-nav .current {
+    color: var(--white);
+    font-weight: 600;
+}
+
+/* Tarjetas de Valores Corporativos (nosotros.html) */
+.values-grid-4 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 25px;
+    margin-top: 35px;
+}
+
+.value-card {
+    background: var(--white);
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 30px 22px;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.value-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 15px 30px rgba(0, 51, 102, 0.12);
+    border-color: var(--blue-accent);
+}
+
+.value-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: rgba(0, 80, 158, 0.1);
+    color: var(--blue-accent);
+    display: grid;
+    place-items: center;
+    font-size: 1.6rem;
+    margin: 0 auto 18px auto;
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+.value-card:hover .value-icon {
+    background: var(--blue-dark);
+    color: var(--white);
+}
+
+.value-card h4 {
+    font-size: 1.25rem;
+    color: var(--blue-dark);
+    margin-bottom: 10px;
+    font-family: 'Outfit', sans-serif;
+}
+
+.value-card p {
+    font-size: 0.95rem;
+    color: #4a5568;
+    line-height: 1.55;
+}
+
+/* Secciones Detalladas de Servicios (servicios.html) */
+.service-division-block {
+    background: var(--white);
+    border-radius: 14px;
+    border: 1px solid #e2e8f0;
+    padding: 40px;
+    margin-bottom: 40px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    align-items: center;
+}
+
+.service-division-block.reverse {
+    grid-template-columns: 1fr 1fr;
+    direction: rtl;
+}
+
+.service-division-block.reverse > * {
+    direction: ltr;
+}
+
+.service-division-media {
+    width: 100%;
+    aspect-ratio: 16 / 11;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.service-division-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.service-division-block:hover .service-division-media img {
+    transform: scale(1.05);
+}
+
+.service-division-info h3 {
+    font-size: 1.8rem;
+    color: var(--blue-dark);
+    font-family: 'Outfit', sans-serif;
+    margin-bottom: 12px;
+}
+
+.service-division-info p {
+    color: #4a5568;
+    line-height: 1.7;
+    margin-bottom: 18px;
+    font-size: 1rem;
+}
+
+.service-feature-list {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 25px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.service-feature-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    color: #2d3748;
+    font-size: 0.95rem;
+}
+
+.service-feature-list li i {
+    color: #27ae60;
+    font-size: 1.1rem;
+    margin-top: 3px;
+}
+
+.service-cta-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--blue-dark);
+    color: var(--white);
+    padding: 12px 24px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: all 0.25s ease;
+}
+
+.service-cta-btn:hover {
+    background: var(--blue-accent);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 18px rgba(0, 80, 158, 0.25);
+}
+
+/* Layout de Página de Contacto (contacto.html) */
+.contact-page-layout {
+    display: grid;
+    grid-template-columns: 1fr 1.4fr;
+    gap: 40px;
+    align-items: flex-start;
+    margin-bottom: 60px;
+}
+
+.contact-info-card {
+    background: var(--blue-dark);
+    color: var(--white);
+    border-radius: 14px;
+    padding: 35px;
+    box-shadow: 0 10px 30px rgba(0, 51, 102, 0.25);
+}
+
+.contact-info-card h3 {
+    font-size: 1.6rem;
+    font-family: 'Outfit', sans-serif;
+    margin-bottom: 10px;
+    color: var(--white);
+}
+
+.contact-info-card p.lead {
+    color: #cbd5e0;
+    margin-bottom: 25px;
+    font-size: 0.95rem;
+}
+
+.contact-item-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 22px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.contact-item-row:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.contact-item-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.12);
+    display: grid;
+    place-items: center;
+    font-size: 1.2rem;
+    color: var(--white);
+    flex-shrink: 0;
+}
+
+.contact-item-text h4 {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #90cdf4;
+    margin-bottom: 4px;
+}
+
+.contact-item-text p, .contact-item-text a {
+    color: var(--white);
+    font-size: 1rem;
+    text-decoration: none;
+    line-height: 1.4;
+}
+
+.contact-item-text a:hover {
+    text-decoration: underline;
+    color: #edf2f7;
+}
+
+.direct-wa-card-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background: #25d366;
+    color: var(--white);
+    padding: 14px 20px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 1rem;
+    margin-top: 25px;
+    transition: background 0.25s ease, transform 0.25s ease;
+    box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
+}
+
+.direct-wa-card-btn:hover {
+    background: #1ebc57;
+    transform: translateY(-2px);
+}
+
+/* Layout de Ficha Técnica Individual (maquinaria-detalle.html) */
+.machine-detail-layout {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 40px;
+    padding: 50px 0;
+}
+
+.machine-main-card {
+    background: var(--white);
+    border-radius: 14px;
+    border: 1px solid #e2e8f0;
+    padding: 35px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.06);
+}
+
+.machine-sidebar-card {
+    background: var(--white);
+    border-radius: 14px;
+    border: 1px solid #e2e8f0;
+    padding: 30px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.06);
+    position: sticky;
+    top: 100px;
+}
+
+/* Tabs de Categorías en Proyectos (proyectos.html) */
+.project-filter-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 40px;
+}
+
+.project-tab-btn {
+    background: var(--white);
+    color: #4a5568;
+    border: 1px solid #e2e8f0;
+    padding: 10px 20px;
+    border-radius: 30px;
+    font-weight: 600;
+    font-size: 0.92rem;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.project-tab-btn:hover {
+    border-color: var(--blue-accent);
+    color: var(--blue-accent);
+    transform: translateY(-1px);
+}
+
+.project-tab-btn.active {
+    background: var(--blue-dark);
+    color: var(--white);
+    border-color: var(--blue-dark);
+    box-shadow: 0 4px 12px rgba(0, 51, 102, 0.2);
+}
+
+@media (max-width: 900px) {
+    .page-hero-title {
+        font-size: 2rem;
+    }
+
+    .service-division-block,
+    .service-division-block.reverse {
+        grid-template-columns: 1fr;
+        padding: 25px 20px;
+        gap: 25px;
+    }
+
+    .contact-page-layout {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+
+    .machine-detail-layout {
+        grid-template-columns: 1fr;
+        padding: 30px 0;
+    }
+
+    .machine-sidebar-card {
+        position: static;
     }
 }

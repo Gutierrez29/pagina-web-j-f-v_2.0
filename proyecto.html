@@ -44,10 +44,19 @@
             <div class="logo-container">
                 <a href="index.html"><img src="img/logo/logo_invertido.webp" alt="Logo J&F" class="logo-img" width="71" height="55"></a>
             </div>
-            <nav class="navbar">
+            <button type="button" class="menu-toggle" id="mobile-menu" aria-label="Abrir menú de navegación"
+                aria-expanded="false" aria-controls="primary-nav">
+                <i class="fa-solid fa-bars" aria-hidden="true"></i>
+            </button>
+
+            <nav class="navbar" id="primary-nav" aria-label="Navegación principal">
                 <ul>
-                    <li><a href="index.html#inicio">Inicio</a></li>
-                    <li><a href="index.html#experiencia">Volver a Proyectos</a></li>
+                    <li><a href="index.html">Inicio</a></li>
+                    <li><a href="nosotros.html">Nosotros</a></li>
+                    <li><a href="servicios.html">Servicios</a></li>
+                    <li><a href="maquinaria.html">Maquinaria</a></li>
+                    <li><a href="proyectos.html" class="active">Proyectos</a></li>
+                    <li><a href="contacto.html">Contacto</a></li>
                 </ul>
             </nav>
         </div>
@@ -63,7 +72,7 @@
 
     <div class="project-layout" id="main-content">
         <div class="main-content reveal-left">
-            <a href="index.html#experiencia" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Volver al listado
+            <a href="proyectos.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Volver al listado
                 de proyectos</a>
 
             <h2>Memoria Descriptiva</h2>
@@ -124,7 +133,7 @@
                 <h4><i class="fa-solid fa-handshake"></i> ¿Tienes un proyecto similar?</h4>
                 <p>Nuestro equipo de ingeniería está listo para brindarte la mejor solución técnica y operativa para tu
                     obra.</p>
-                <a href="index.html#contacto" class="btn-cta">Cotizar Proyecto</a>
+                <a href="contacto.html" class="btn-cta">Cotizar Proyecto</a>
             </div>
         </aside>
     </div>

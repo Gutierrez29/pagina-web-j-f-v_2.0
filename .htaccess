@@ -14,7 +14,16 @@ AddDefaultCharset UTF-8
     RewriteCond %{HTTP_HOST} ^www\.inversionesjyf\.com$ [NC]
     RewriteRule ^(.*)$ https://inversionesjyf.com/$1 [L,R=301]
 
-    # 3. Reescribir URLs limpias de proyectos (ej. /proyecto/palacio-municipal)
+    # 3. Reescribir URLs limpias de secciones principales
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(nosotros|servicios|maquinaria|proyectos|contacto)/?$ $1.html [L,QSA]
+
+    # 4. Reescribir URLs limpias de detalle de maquinaria y proyectos
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^maquinaria/([^/]+)/?$ maquinaria-detalle.html?id=$1 [L,QSA]
+
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteRule ^proyecto/([^/]+)/?$ proyecto.html?id=$1 [L,QSA]
