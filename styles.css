@@ -2418,6 +2418,223 @@ h1, h2, h3, h4, .navbar a {
     box-shadow: 0 8px 18px rgba(37, 211, 102, 0.35);
 }
 
+/* Picker de Maquinaria en el Formulario de Cotización */
+.form-label-with-hint {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 7px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #2d3748;
+}
+
+.label-hint {
+    font-size: 0.78rem;
+    color: #718096;
+    font-weight: 400;
+}
+
+.machinery-picker-list {
+    max-height: 290px;
+    overflow-y: auto;
+}
+
+.machinery-picker-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+    border-bottom: 1px solid #edf2f7;
+}
+
+.machinery-picker-item:last-child {
+    border-bottom: none;
+}
+
+.machinery-picker-item:hover,
+.machinery-picker-item.highlighted {
+    background: #f1f5f9;
+}
+
+.machinery-picker-item.active {
+    background: #e6f0fa;
+}
+
+.picker-thumb {
+    width: 52px;
+    height: 38px;
+    border-radius: 6px;
+    object-fit: cover;
+    flex-shrink: 0;
+    background: #0f172a;
+}
+
+.picker-thumb-fallback {
+    width: 52px;
+    height: 38px;
+    border-radius: 6px;
+    background: #edf2f7;
+    color: var(--blue-accent);
+    display: grid;
+    place-items: center;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+.picker-info {
+    flex-grow: 1;
+    min-width: 0;
+}
+
+.picker-name {
+    font-weight: 700;
+    color: var(--blue-dark);
+    font-size: 0.88rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 2px;
+}
+
+.picker-meta {
+    font-size: 0.76rem;
+    color: #718096;
+}
+
+/* Tarjeta Preview del Equipo Seleccionado */
+.selected-machine-preview {
+    background: #f8fafc;
+    border: 1.5px solid #cbd5e0;
+    border-radius: 12px;
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    box-shadow: 0 4px 12px rgba(0, 34, 68, 0.04);
+    animation: fadeIn 0.25s ease;
+}
+
+.preview-img {
+    width: 88px;
+    height: 64px;
+    border-radius: 8px;
+    object-fit: cover;
+    flex-shrink: 0;
+    background: #0f172a;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+}
+
+.preview-img-fallback {
+    width: 88px;
+    height: 64px;
+    border-radius: 8px;
+    background: #e2e8f0;
+    color: var(--blue-accent);
+    display: grid;
+    place-items: center;
+    font-size: 1.8rem;
+    flex-shrink: 0;
+}
+
+.preview-body {
+    flex-grow: 1;
+    min-width: 0;
+}
+
+.preview-title-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 4px;
+}
+
+.preview-name {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--blue-dark);
+    margin: 0;
+    font-family: 'Outfit', sans-serif;
+}
+
+.preview-badge {
+    background: #e6f0fa;
+    color: var(--blue-accent);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.preview-specs-row {
+    display: flex;
+    gap: 12px;
+    font-size: 0.8rem;
+    color: #4a5568;
+    flex-wrap: wrap;
+}
+
+.preview-specs-row span strong {
+    color: var(--blue-dark);
+}
+
+.preview-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-items: flex-end;
+    flex-shrink: 0;
+}
+
+.preview-link-spec {
+    font-size: 0.82rem;
+    color: var(--blue-accent);
+    text-decoration: none;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.preview-link-spec:hover {
+    text-decoration: underline;
+}
+
+.preview-btn-change {
+    background: none;
+    border: none;
+    color: #718096;
+    font-size: 0.78rem;
+    cursor: pointer;
+    text-decoration: underline;
+    padding: 0;
+}
+
+.preview-btn-change:hover {
+    color: #c53030;
+}
+
+@media (max-width: 600px) {
+    .selected-machine-preview {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .preview-actions {
+        align-items: flex-start;
+        flex-direction: row;
+        width: 100%;
+        justify-content: space-between;
+        margin-top: 8px;
+    }
+}
+
 /* Banner de éxito */
 .quote-success-banner {
     text-align: center;

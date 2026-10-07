@@ -203,7 +203,7 @@
                                         <label for="quote-phone">Teléfono / WhatsApp de Contacto <span class="req">*</span></label>
                                         <div class="input-icon-wrap">
                                             <i class="fa-solid fa-phone"></i>
-                                            <input type="tel" id="quote-phone" name="phone" required placeholder="Ej. 987654321">
+                                            <input type="tel" id="quote-phone" name="phone" required maxlength="9" pattern="[0-9]{9}" inputmode="numeric" placeholder="Ej. 987654321">
                                         </div>
                                         <span class="field-error" id="error-phone"></span>
                                     </div>
@@ -249,13 +249,34 @@
                                         <span class="field-error" id="error-service"></span>
                                     </div>
 
-                                    <div class="form-group">
-                                        <label for="quote-machinery">Equipo Específico Requerido</label>
-                                        <div class="input-icon-wrap">
-                                            <i class="fa-solid fa-tractor"></i>
-                                            <select id="quote-machinery" name="machinery">
-                                                <option value="Flota completa / A definir según proyecto">Flota completa / A definir según proyecto</option>
-                                            </select>
+                                    <!-- Selector Escribible de Maquinaria con Tarjeta Preview -->
+                                    <div class="form-group" id="form-machinery-group">
+                                        <label for="quote-machinery-search">Equipo Específico Requerido</label>
+                                        <div class="combobox-field-container">
+                                            <i class="fa-solid fa-truck-monster input-lead-icon" aria-hidden="true"></i>
+                                            <input type="text" id="quote-machinery-search" class="combobox-search-input" 
+                                                   placeholder="Flota completa / Escriba para buscar equipo..." 
+                                                   autocomplete="off" spellcheck="false"
+                                                   aria-label="Buscar y seleccionar maquinaria">
+                                            <button type="button" id="form-machinery-clear-btn" class="search-clear-btn" aria-label="Limpiar equipo seleccionado" style="display: none;">
+                                                <i class="fa-solid fa-xmark"></i>
+                                            </button>
+                                            <button type="button" id="form-machinery-toggle-btn" class="combobox-chevron-btn" aria-label="Desplegar catálogo de maquinaria" tabindex="-1">
+                                                <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
+                                            </button>
+
+                                            <!-- Dropdown interactivo con fotos miniatura y especificaciones -->
+                                            <ul id="form-machinery-dropdown" class="combobox-options-list machinery-picker-list" role="listbox" aria-label="Catálogo de maquinaria">
+                                                <!-- Se genera dinámicamente con FLEET_DATA -->
+                                            </ul>
+                                        </div>
+                                        <input type="hidden" id="quote-machinery" name="machinery" value="Flota completa / A definir según proyecto">
+                                    </div>
+
+                                    <!-- TARJETA PREVIEW DINÁMICA DEL EQUIPO / CAMIÓN SELECCIONADO (Ocupa ancho completo) -->
+                                    <div class="form-group full-width" id="machine-preview-container" style="display: none;">
+                                        <div id="selected-machine-card" class="selected-machine-preview">
+                                            <!-- Poblado dinámicamente: foto, nombre, modelo, capacidad, potencia y enlace a ficha -->
                                         </div>
                                     </div>
 

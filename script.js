@@ -1086,17 +1086,259 @@
         const btnWhatsApp = document.getElementById('btn-send-whatsapp');
         const successBox = document.getElementById('quote-success-box');
         const btnReset = document.getElementById('btn-reset-quote');
-        const machinerySelect = document.getElementById('quote-machinery');
 
-        // Poblar selector de equipos desde FLEET_DATA
-        if (machinerySelect) {
-            FLEET_DATA.forEach(machine => {
-                const opt = document.createElement('option');
-                opt.value = machine.name;
-                opt.textContent = `${machine.name} (${machine.category})`;
-                machinerySelect.appendChild(opt);
+        // Controles de Maquinaria Escribible / Combobox en Formulario
+        const machinerySearchInput = document.getElementById('quote-machinery-search');
+        const machineryHiddenInput = document.getElementById('quote-machinery');
+        const machineryToggleBtn = document.getElementById('form-machinery-toggle-btn');
+        const machineryClearBtn = document.getElementById('form-machinery-clear-btn');
+        const machineryDropdown = document.getElementById('form-machinery-dropdown');
+        const previewContainer = document.getElementById('machine-preview-container');
+        const previewCard = document.getElementById('selected-machine-card');
+
+        // Restricción estricta de dígitos para Teléfono y RUC
+        const phoneInput = document.getElementById('quote-phone');
+        if (phoneInput) {
+            phoneInput.addEventListener('input', (e) => {
+                e.target.value = e.target.value.replace(/\D/g, '').slice(0, 9);
             });
         }
+
+        const rucInput = document.getElementById('quote-ruc');
+        if (rucInput) {
+            rucInput.addEventListener('input', (e) => {
+                e.target.value = e.target.value.replace(/\D/g, '').slice(0, 11);
+            });
+        }
+
+        // Renderizado de la Tarjeta Preview del Equipo / Camión seleccionado
+        const renderMachinePreview = (machineOrName) => {
+            if (!previewContainer || !previewCard) return;
+
+            let machine = null;
+            if (typeof machineOrName === 'object' && machineOrName !== null) {
+                machine = machineOrName;
+            } else if (typeof machineOrName === 'string') {
+                machine = FLEET_DATA.find(m => m.name.toLowerCase() === machineOrName.toLowerCase());
+            }
+
+            if (machine) {
+                previewCard.innerHTML = `
+                    <img src="${machine.img}" alt="${machine.name}" class="preview-img">
+                    <div class="preview-body">
+                        <div class="preview-title-row">
+                            <h4 class="preview-name">${machine.name}</h4>
+                            <span class="preview-badge">${machine.brand}</span>
+                            <span class="preview-badge" style="background:#e8f8ef;color:#1e824c;">${machine.category}</span>
+                        </div>
+                        <div class="preview-specs-row">
+                            <span>Modelo: <strong>${machine.model}</strong></span>
+                            <span>Capacidad: <strong>${machine.capacity}</strong></span>
+                            <span>Potencia: <strong>${machine.power.split('/')[0].trim()}</strong></span>
+                            <span>Peso: <strong>${machine.operatingWeight.split('(')[0].trim()}</strong></span>
+                        </div>
+                    </div>
+                    <div class="preview-actions">
+                        <a href="maquinaria-detalle.html?id=${machine.id}" target="_blank" rel="noopener" class="preview-link-spec" title="Ver ficha técnica completa">
+                            Ver Ficha <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                        </a>
+                        <button type="button" class="preview-btn-change" id="btn-change-machine">Cambiar</button>
+                    </div>
+                `;
+                previewContainer.style.display = 'block';
+
+                const changeBtn = previewCard.querySelector('#btn-change-machine');
+                if (changeBtn) {
+                    changeBtn.addEventListener('click', () => {
+                        if (machinerySearchInput) {
+                            machinerySearchInput.value = '';
+                            machinerySearchInput.focus();
+                            toggleMachineryDropdown(true);
+                        }
+                    });
+                }
+            } else {
+                // Opción genérica: Flota completa / A definir
+                previewCard.innerHTML = `
+                    <div class="preview-img-fallback">
+                        <i class="fa-solid fa-layer-group"></i>
+                    </div>
+                    <div class="preview-body">
+                        <div class="preview-title-row">
+                            <h4 class="preview-name">Flota Integral / Asesoría Técnica</h4>
+                            <span class="preview-badge">Multiequipos J&F</span>
+                        </div>
+                        <div class="preview-specs-row">
+                            <span>Se cotizará el paquete de equipos (excavadoras, volquetes, rodillos, cisternas) según el plan de obra.</span>
+                        </div>
+                    </div>
+                    <div class="preview-actions">
+                        <button type="button" class="preview-btn-change" id="btn-change-machine">Elegir equipo específico</button>
+                    </div>
+                `;
+                previewContainer.style.display = 'block';
+
+                const changeBtn = previewCard.querySelector('#btn-change-machine');
+                if (changeBtn) {
+                    changeBtn.addEventListener('click', () => {
+                        if (machinerySearchInput) {
+                            machinerySearchInput.value = '';
+                            machinerySearchInput.focus();
+                            toggleMachineryDropdown(true);
+                        }
+                    });
+                }
+            }
+        };
+
+        // Poblar catálogo en el dropdown escribible
+        if (machineryDropdown) {
+            machineryDropdown.innerHTML = '';
+
+            // Opción por defecto
+            const defaultLi = document.createElement('li');
+            defaultLi.className = 'machinery-picker-item active';
+            defaultLi.setAttribute('data-name', 'Flota completa / A definir según proyecto');
+            defaultLi.setAttribute('role', 'option');
+            defaultLi.innerHTML = `
+                <div class="picker-thumb-fallback"><i class="fa-solid fa-layer-group"></i></div>
+                <div class="picker-info">
+                    <div class="picker-name">Flota completa / A definir según proyecto</div>
+                    <div class="picker-meta">Asesoría integral multiequipo para obra</div>
+                </div>
+            `;
+            machineryDropdown.appendChild(defaultLi);
+
+            // Cada máquina de la flota con su foto y detalles
+            FLEET_DATA.forEach(machine => {
+                const li = document.createElement('li');
+                li.className = 'machinery-picker-item';
+                li.setAttribute('data-name', machine.name);
+                li.setAttribute('data-id', machine.id);
+                li.setAttribute('role', 'option');
+                li.innerHTML = `
+                    <img src="${machine.img}" alt="${machine.name}" class="picker-thumb" loading="lazy">
+                    <div class="picker-info">
+                        <div class="picker-name">${machine.name}</div>
+                        <div class="picker-meta">${machine.brand} &bull; ${machine.category} &bull; Modelo ${machine.model}</div>
+                    </div>
+                `;
+                machineryDropdown.appendChild(li);
+            });
+        }
+
+        const toggleMachineryDropdown = (forceState) => {
+            if (!machineryDropdown) return;
+            const isOpen = forceState !== undefined ? forceState : !machineryDropdown.classList.contains('open');
+            machineryDropdown.classList.toggle('open', isOpen);
+            if (machineryToggleBtn) {
+                machineryToggleBtn.classList.toggle('rotated', isOpen);
+            }
+            if (isOpen && (!machinerySearchInput || !machinerySearchInput.value.trim())) {
+                const items = machineryDropdown.querySelectorAll('.machinery-picker-item');
+                items.forEach(it => it.style.display = 'flex');
+            }
+        };
+
+        const selectMachineOption = (machineName) => {
+            if (machineryHiddenInput) machineryHiddenInput.value = machineName;
+            if (machinerySearchInput) {
+                machinerySearchInput.value = machineName === 'Flota completa / A definir según proyecto' ? '' : machineName;
+                machinerySearchInput.placeholder = machineName;
+            }
+            if (machineryClearBtn) {
+                machineryClearBtn.style.display = machineName === 'Flota completa / A definir según proyecto' ? 'none' : 'block';
+            }
+
+            // Marcar activo en el dropdown
+            if (machineryDropdown) {
+                const items = machineryDropdown.querySelectorAll('.machinery-picker-item');
+                items.forEach(it => {
+                    const isSelected = it.getAttribute('data-name') === machineName;
+                    it.classList.toggle('active', isSelected);
+                });
+            }
+
+            toggleMachineryDropdown(false);
+            renderMachinePreview(machineName);
+        };
+
+        if (machineryToggleBtn) {
+            machineryToggleBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                toggleMachineryDropdown();
+            });
+        }
+
+        if (machinerySearchInput) {
+            machinerySearchInput.addEventListener('click', (e) => {
+                e.stopPropagation();
+                toggleMachineryDropdown(true);
+            });
+
+            machinerySearchInput.addEventListener('focus', () => {
+                toggleMachineryDropdown(true);
+            });
+
+            machinerySearchInput.addEventListener('input', (e) => {
+                const q = e.target.value.toLowerCase().trim();
+                if (machineryClearBtn) machineryClearBtn.style.display = q ? 'block' : 'none';
+                toggleMachineryDropdown(true);
+
+                if (machineryDropdown) {
+                    const items = machineryDropdown.querySelectorAll('.machinery-picker-item');
+                    items.forEach(it => {
+                        const name = (it.getAttribute('data-name') || '').toLowerCase();
+                        const isMatch = name.includes(q);
+                        it.style.display = isMatch ? 'flex' : 'none';
+                    });
+                }
+            });
+
+            machinerySearchInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    toggleMachineryDropdown(false);
+                } else if (e.key === 'Enter') {
+                    e.preventDefault();
+                    if (machineryDropdown) {
+                        const firstVisible = Array.from(machineryDropdown.querySelectorAll('.machinery-picker-item'))
+                            .find(it => it.style.display !== 'none');
+                        if (firstVisible) {
+                            selectMachineOption(firstVisible.getAttribute('data-name'));
+                        } else {
+                            toggleMachineryDropdown(false);
+                        }
+                    }
+                }
+            });
+        }
+
+        if (machineryClearBtn) {
+            machineryClearBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                selectMachineOption('Flota completa / A definir según proyecto');
+                if (machinerySearchInput) machinerySearchInput.focus();
+            });
+        }
+
+        // Delegación de clicks en opciones del selector de maquinaria
+        if (machineryDropdown) {
+            machineryDropdown.addEventListener('click', (e) => {
+                const item = e.target.closest('.machinery-picker-item');
+                if (item) {
+                    e.stopPropagation();
+                    const name = item.getAttribute('data-name');
+                    selectMachineOption(name);
+                }
+            });
+        }
+
+        document.addEventListener('click', (e) => {
+            const group = document.getElementById('form-machinery-group');
+            if (group && !group.contains(e.target)) {
+                toggleMachineryDropdown(false);
+            }
+        });
 
         // Auto-selección desde parámetros de URL (?equipo=...&servicio=...)
         const urlParams = new URLSearchParams(window.location.search);
@@ -1114,23 +1356,10 @@
             }
         }
 
-        if (machinerySelect && prefilledEquip) {
-            let matched = false;
-            for (let i = 0; i < machinerySelect.options.length; i++) {
-                if (machinerySelect.options[i].value.toLowerCase().includes(prefilledEquip.toLowerCase()) ||
-                    prefilledEquip.toLowerCase().includes(machinerySelect.options[i].value.toLowerCase())) {
-                    machinerySelect.selectedIndex = i;
-                    matched = true;
-                    break;
-                }
-            }
-            if (!matched) {
-                const customOpt = document.createElement('option');
-                customOpt.value = prefilledEquip;
-                customOpt.textContent = prefilledEquip;
-                customOpt.selected = true;
-                machinerySelect.appendChild(customOpt);
-            }
+        if (prefilledEquip) {
+            selectMachineOption(prefilledEquip);
+        } else {
+            renderMachinePreview('Flota completa / A definir según proyecto');
         }
 
         // Scroll suave al cotizador si viene con ancla o parámetros pre-llenados
@@ -1190,14 +1419,15 @@
 
             const rucRegex = /^\d{11}$/;
             if (!ruc || !rucRegex.test(ruc)) {
-                setFieldError('quote-ruc', 'error-ruc', 'El RUC debe ser un número válido de 11 dígitos.');
+                setFieldError('quote-ruc', 'error-ruc', 'El RUC debe ser exactamente de 11 dígitos numéricos.');
                 isValid = false;
             } else {
                 clearFieldError('quote-ruc', 'error-ruc');
             }
 
-            if (!phone || phone.length < 7) {
-                setFieldError('quote-phone', 'error-phone', 'Ingrese un teléfono o WhatsApp de contacto válido.');
+            const phoneRegex = /^\d{9}$/;
+            if (!phone || !phoneRegex.test(phone)) {
+                setFieldError('quote-phone', 'error-phone', 'El teléfono debe tener exactamente 9 dígitos numéricos.');
                 isValid = false;
             } else {
                 clearFieldError('quote-phone', 'error-phone');
@@ -1291,7 +1521,6 @@
         const generateWhatsAppQuote = () => {
             const isStep1Valid = validateStep1();
             if (!isStep1Valid) {
-                // Volver a paso 1 si falta información
                 step2.style.display = 'none';
                 step1.style.display = 'block';
                 stepNav2.classList.remove('active');
@@ -1309,7 +1538,7 @@
             const email = document.getElementById('quote-email').value.trim();
 
             const service = document.getElementById('quote-service').value;
-            const machinery = document.getElementById('quote-machinery').value;
+            const machinery = (machineryHiddenInput ? machineryHiddenInput.value : '') || 'Flota completa / A definir según proyecto';
             const location = document.getElementById('quote-location').value.trim();
             const duration = document.getElementById('quote-duration').value;
             const startDate = document.getElementById('quote-start-date').value || 'A definir / Inmediata';
@@ -1344,7 +1573,7 @@ _Enviado desde el portal oficial inversionesjyf.com_`;
             btnWhatsApp.addEventListener('click', generateWhatsAppQuote);
         }
 
-        // Envío formal de formulario
+        // Envío formal de formulario por Correo (Configurado para diego.gutierrez2911@gmail.com según solicitud)
         form.addEventListener('submit', (e) => {
             e.preventDefault();
 
@@ -1352,17 +1581,95 @@ _Enviado desde el portal oficial inversionesjyf.com_`;
 
             const name = document.getElementById('quote-name').value.trim();
             const company = document.getElementById('quote-company').value.trim();
+            const ruc = document.getElementById('quote-ruc').value.trim();
+            const phone = document.getElementById('quote-phone').value.trim();
+            const email = document.getElementById('quote-email').value.trim();
+
             const service = document.getElementById('quote-service').value;
-            const machinery = document.getElementById('quote-machinery').value;
+            const machinery = (machineryHiddenInput ? machineryHiddenInput.value : '') || 'Flota completa / A definir según proyecto';
+            const location = document.getElementById('quote-location').value.trim();
+            const duration = document.getElementById('quote-duration').value;
+            const startDate = document.getElementById('quote-start-date').value || 'A definir / Inmediata';
+            const details = document.getElementById('quote-details').value.trim();
 
-            // Abrir mailto formal pre-llenado
-            const subject = encodeURIComponent(`Solicitud Cotización: ${service} - ${company}`);
-            const body = encodeURIComponent(`Estimados Inversiones J&F Hrnos S.A.C.,\n\nPor medio de la presente, solicitamos cotización formal para el proyecto:\n\n- Solicitante: ${name}\n- Empresa: ${company}\n- Servicio: ${service}\n- Equipo requerido: ${machinery}\n\nQuedamos a la espera de su propuesta técnico-económica.`);
-            window.location.href = `mailto:residencia@inversionesjyf.com?cc=gerencia@inversionesjyf.com&subject=${subject}&body=${body}`;
+            // Correo de destino para pruebas solicitado por el usuario
+            const targetEmail = 'diego.gutierrez2911@gmail.com';
+            const subject = encodeURIComponent(`Solicitud Cotización Formal: ${service} - ${company} (RUC ${ruc})`);
+            const body = encodeURIComponent(`Estimado Diego Gutiérrez / Inversiones J&F Hrnos S.A.C.,
 
-            // Mostrar estado de éxito en pantalla
+Por medio de la presente, solicitamos formalmente la cotización técnico-económica para el siguiente proyecto:
+
+===========================================
+1. DATOS DE LA EMPRESA / SOLICITANTE
+===========================================
+- Contacto: ${name}
+- Empresa / Razón Social: ${company}
+- RUC: ${ruc}
+- Teléfono / WhatsApp: ${phone}
+- Correo Electrónico: ${email}
+
+===========================================
+2. REQUERIMIENTO TÉCNICO DE LA OBRA
+===========================================
+- Servicio Solicitado: ${service}
+- Maquinaria / Equipo Específico: ${machinery}
+- Ubicación / Frente de Trabajo: ${location}
+- Duración Estimada del Contrato: ${duration}
+- Fecha Estimada de Inicio: ${startDate}
+
+===========================================
+3. ALCANCES Y ESPECIFICACIONES DE LA OBRA
+===========================================
+${details}
+
+===========================================
+Solicitud generada a través del portal oficial de Inversiones J&F Hrnos S.A.C.
+Quedamos a la espera de su propuesta técnico-comercial.`);
+
+            // Abrir mailto hacia diego.gutierrez2911@gmail.com
+            window.location.href = `mailto:${targetEmail}?subject=${subject}&body=${body}`;
+
+            // Mostrar estado de éxito y resumen técnico en pantalla
             form.style.display = 'none';
-            if (successBox) successBox.style.display = 'block';
+            if (successBox) {
+                successBox.innerHTML = `
+                    <i class="fa-solid fa-circle-check"></i>
+                    <h3>¡Solicitud de Cotización Registrada!</h3>
+                    <p>Los datos han sido preparados para envío a: <strong style="color:var(--blue-dark);">${targetEmail}</strong></p>
+                    <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:18px; text-align:left; margin:20px 0; font-size:0.9rem; line-height:1.6;">
+                        <p style="margin:0 0 6px 0; font-weight:700; color:var(--blue-dark);"><i class="fa-solid fa-file-lines"></i> Resumen de la Solicitud Generada:</p>
+                        <p style="margin:2px 0;"><strong>Empresa:</strong> ${company} (RUC: ${ruc})</p>
+                        <p style="margin:2px 0;"><strong>Contacto:</strong> ${name} &bull; ${phone} &bull; ${email}</p>
+                        <p style="margin:2px 0;"><strong>Servicio:</strong> ${service}</p>
+                        <p style="margin:2px 0;"><strong>Equipo Seleccionado:</strong> ${machinery}</p>
+                        <p style="margin:2px 0;"><strong>Ubicación:</strong> ${location} &bull; <strong>Duración:</strong> ${duration}</p>
+                    </div>
+                    <p class="direct-attention">Para atención prioritaria inmediata, comuníquese directamente al <strong>+51 989 401 670</strong>.</p>
+                    <button type="button" id="btn-reset-quote" class="btn-wizard-secondary" style="margin-top:15px;">Realizar otra cotización</button>
+                `;
+                successBox.style.display = 'block';
+
+                const newResetBtn = successBox.querySelector('#btn-reset-quote');
+                if (newResetBtn) {
+                    newResetBtn.addEventListener('click', () => {
+                        form.reset();
+                        successBox.style.display = 'none';
+                        form.style.display = 'block';
+                        step2.style.display = 'none';
+                        step1.style.display = 'block';
+
+                        stepNav1.classList.remove('completed');
+                        stepNav1.classList.add('active');
+                        stepNav1.querySelector('.step-circle').textContent = '1';
+
+                        stepNav2.classList.remove('active');
+                        stepNav2.setAttribute('aria-selected', 'false');
+
+                        if (stepDivider) stepDivider.classList.remove('active');
+                        selectMachineOption('Flota completa / A definir según proyecto');
+                    });
+                }
+            }
         });
 
         // Restablecer asistente
@@ -1382,6 +1689,7 @@ _Enviado desde el portal oficial inversionesjyf.com_`;
                 stepNav2.setAttribute('aria-selected', 'false');
 
                 if (stepDivider) stepDivider.classList.remove('active');
+                selectMachineOption('Flota completa / A definir según proyecto');
             });
         }
     }
