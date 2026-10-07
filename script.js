@@ -6,14 +6,22 @@
     'use strict';
 
     document.addEventListener('DOMContentLoaded', () => {
-        initHeaderScroll();
-        initMobileMenu();
-        initHeroSlider();
-        initRevealAnimations();
-        initFaqAccordion();
-        initEmailDeobfuscation();
-        initMachineryCatalog();
-        initQuotationWizard();
+        const safeInit = (fn, name) => {
+            try {
+                if (typeof fn === 'function') fn();
+            } catch (err) {
+                console.error(`[InitError] ${name}:`, err);
+            }
+        };
+
+        safeInit(initHeaderScroll, 'HeaderScroll');
+        safeInit(initMobileMenu, 'MobileMenu');
+        safeInit(initHeroSlider, 'HeroSlider');
+        safeInit(initRevealAnimations, 'RevealAnimations');
+        safeInit(initFaqAccordion, 'FaqAccordion');
+        safeInit(initEmailDeobfuscation, 'EmailDeobfuscation');
+        safeInit(initMachineryCatalog, 'MachineryCatalog');
+        safeInit(initQuotationWizard, 'QuotationWizard');
     });
 
     /**
@@ -264,6 +272,23 @@
                     answer.style.maxHeight = !isActive ? `${answer.scrollHeight}px` : null;
                 }
             });
+        });
+    }
+
+    /**
+     * 6. Deofuscación segura de correos electrónicos en cliente
+     */
+    function initEmailDeobfuscation() {
+        const emailSpans = document.querySelectorAll('.obfuscated-email');
+        if (emailSpans.length === 0) return;
+
+        emailSpans.forEach(span => {
+            const user = span.getAttribute('data-user');
+            const domain = span.getAttribute('data-domain');
+            if (user && domain) {
+                const email = `${user}@${domain}`;
+                span.innerHTML = `<a href="mailto:${email}" style="color: inherit; text-decoration: none;">${email}</a>`;
+            }
         });
     }
 
@@ -581,6 +606,11 @@
         }
     ];
 
+    // Exponer datos de flota globalmente para hidratación instantánea
+    if (typeof window !== 'undefined') {
+        window.FLEET_DATA = FLEET_DATA;
+    }
+
     function initMachineryCatalog() {
         const grid = document.getElementById('grid-maquinaria');
         if (!grid) return;
@@ -602,6 +632,12 @@
         let currentCategory = 'all';
         let currentWorkType = 'all';
         let currentSearchQuery = '';
+
+        // Actualizar contador total en píldora 'Todas'
+        const countAllEl = document.getElementById('count-all');
+        if (countAllEl) {
+            countAllEl.textContent = FLEET_DATA.length;
+        }
 
         // Función para renderizar tarjetas
         const renderCatalog = (items) => {

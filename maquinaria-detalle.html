@@ -259,80 +259,94 @@
             const params = new URLSearchParams(window.location.search);
             const machineId = params.get('id') || 'excavadora-volvo-ec300';
 
+            const populateMachine = (machine, list) => {
+                if (!machine) return;
+
+                // Actualizar metas y títulos
+                document.title = `${machine.name} - Ficha Técnica | Inversiones J&F Hrnos`;
+                const titleEl = document.getElementById('machine-hero-title');
+                const subtitleEl = document.getElementById('machine-hero-subtitle');
+                const breadcrumbEl = document.getElementById('machine-breadcrumb-name');
+                const badgeCat = document.getElementById('machine-badge-cat');
+                const descEl = document.getElementById('machine-full-desc');
+                const imgEl = document.getElementById('machine-img');
+
+                if (titleEl) titleEl.textContent = machine.name;
+                if (subtitleEl) subtitleEl.textContent = `${machine.category} • Modelo ${machine.model} (${machine.year})`;
+                if (breadcrumbEl) breadcrumbEl.textContent = machine.name;
+                if (badgeCat) badgeCat.textContent = machine.category;
+                if (descEl) descEl.textContent = machine.desc;
+                if (imgEl) {
+                    imgEl.src = machine.img;
+                    imgEl.alt = machine.name;
+                }
+
+                // Actualizar especificaciones
+                const setField = (id, val) => {
+                    const el = document.getElementById(id);
+                    if (el) el.textContent = val || '-';
+                };
+
+                setField('spec-brand', machine.brand);
+                setField('spec-model', machine.model);
+                setField('spec-year', machine.year);
+                setField('spec-power', machine.power);
+                setField('spec-capacity', machine.capacity);
+                setField('spec-weight', machine.operatingWeight);
+                setField('spec-reach', machine.maxReach);
+                setField('spec-depth', machine.maxDepth);
+
+                setField('sidebar-brand', machine.brand);
+                setField('sidebar-worktype', machine.workType);
+
+                // Aplicaciones en obra
+                const appsList = document.getElementById('machine-apps-list');
+                if (appsList && machine.applications) {
+                    appsList.innerHTML = machine.applications.map(app => 
+                        `<li><i class="fa-solid fa-circle-check" style="color: #27ae60;"></i> <span>${app}</span></li>`
+                    ).join('');
+                }
+
+                // Botones de Cotización
+                const quoteBtn = document.getElementById('btn-quote-machine');
+                const waBtn = document.getElementById('btn-wa-machine');
+                if (quoteBtn) {
+                    quoteBtn.href = `contacto.html?equipo=${encodeURIComponent(machine.name)}&servicio=${encodeURIComponent('Alquiler de Maquinaria Pesada')}#cotizador`;
+                }
+                if (waBtn) {
+                    waBtn.href = `https://wa.me/51989401670?text=${encodeURIComponent('Hola Inversiones J&F, deseo cotizar el equipo ' + machine.name + ' (' + machine.model + ') para una obra.')}`;
+                }
+
+                // Equipos relacionados
+                const relatedGrid = document.getElementById('related-machines-grid');
+                if (relatedGrid && list && list.length > 0) {
+                    const related = list.filter(m => m.id !== machine.id).slice(0, 3);
+                    relatedGrid.innerHTML = related.map(rel => `
+                        <a href="maquinaria-detalle.html?id=${rel.id}" class="related-machine-card" style="text-decoration: none; color: inherit; border: 1px solid #e2e8f0; border-radius: 10px; overflow: hidden; background: #fff; transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 8px 18px rgba(0,34,68,0.08)';" onmouseout="this.style.transform='none'; this.style.boxShadow='none';">
+                            <img src="${rel.img}" alt="${rel.name}" style="width: 100%; height: 125px; object-fit: cover; display: block;">
+                            <div style="padding: 12px;">
+                                <span style="font-size: 0.75rem; color: var(--blue-accent); font-weight: 700; text-transform: uppercase;">${rel.category}</span>
+                                <h5 style="margin: 4px 0 2px 0; font-size: 0.95rem; font-weight: 700; color: var(--blue-dark); font-family: 'Outfit', sans-serif;">${rel.name}</h5>
+                                <span style="font-size: 0.8rem; color: #718096;">Modelo ${rel.model}</span>
+                            </div>
+                        </a>
+                    `).join('');
+                }
+            };
+
+            // Hidratar inmediatamente si FLEET_DATA está disponible en memoria
+            if (window.FLEET_DATA && window.FLEET_DATA.length > 0) {
+                const initialMachine = window.FLEET_DATA.find(m => m.id === machineId) || window.FLEET_DATA[0];
+                populateMachine(initialMachine, window.FLEET_DATA);
+            }
+
             fetch('maquinaria.json')
                 .then(res => res.json())
                 .catch(() => window.FLEET_DATA || [])
                 .then(data => {
-                    const list = Array.isArray(data) ? data : (window.FLEET_DATA || []);
+                    const list = Array.isArray(data) && data.length > 0 ? data : (window.FLEET_DATA || []);
                     const machine = list.find(m => m.id === machineId) || list[0];
-                    if (!machine) return;
-
-                    // Actualizar metas y títulos
-                    document.title = `${machine.name} - Ficha Técnica | Inversiones J&F Hrnos`;
-                    const titleEl = document.getElementById('machine-hero-title');
-                    const subtitleEl = document.getElementById('machine-hero-subtitle');
-                    const breadcrumbEl = document.getElementById('machine-breadcrumb-name');
-                    const badgeCat = document.getElementById('machine-badge-cat');
-                    const descEl = document.getElementById('machine-full-desc');
-                    const imgEl = document.getElementById('machine-img');
-
-                    if (titleEl) titleEl.textContent = machine.name;
-                    if (subtitleEl) subtitleEl.textContent = `${machine.category} • Modelo ${machine.model} (${machine.year})`;
-                    if (breadcrumbEl) breadcrumbEl.textContent = machine.name;
-                    if (badgeCat) badgeCat.textContent = machine.category;
-                    if (descEl) descEl.textContent = machine.desc;
-                    if (imgEl) {
-                        imgEl.src = machine.img;
-                        imgEl.alt = machine.name;
-                    }
-
-                    // Actualizar especificaciones
-                    document.getElementById('spec-brand').textContent = machine.brand;
-                    document.getElementById('spec-model').textContent = machine.model;
-                    document.getElementById('spec-year').textContent = machine.year;
-                    document.getElementById('spec-power').textContent = machine.power;
-                    document.getElementById('spec-capacity').textContent = machine.capacity;
-                    document.getElementById('spec-weight').textContent = machine.operatingWeight;
-                    document.getElementById('spec-reach').textContent = machine.maxReach;
-                    document.getElementById('spec-depth').textContent = machine.maxDepth;
-
-                    // Sidebar
-                    document.getElementById('sidebar-brand').textContent = machine.brand;
-                    document.getElementById('sidebar-worktype').textContent = machine.workType;
-
-                    // Aplicaciones
-                    const appsList = document.getElementById('machine-apps-list');
-                    if (appsList && machine.applications) {
-                        appsList.innerHTML = machine.applications.map(app => 
-                            `<li><i class="fa-solid fa-check"></i> <span>${app}</span></li>`
-                        ).join('');
-                    }
-
-                    // Botones de Cotización
-                    const quoteBtn = document.getElementById('btn-quote-machine');
-                    const waBtn = document.getElementById('btn-wa-machine');
-                    if (quoteBtn) {
-                        quoteBtn.href = `contacto.html?equipo=${encodeURIComponent(machine.name)}&servicio=${encodeURIComponent('Alquiler de Maquinaria Pesada')}`;
-                    }
-                    if (waBtn) {
-                        waBtn.href = `https://wa.me/51989401670?text=${encodeURIComponent('Hola Inversiones J&F, deseo cotizar el equipo ' + machine.name + ' (' + machine.model + ') para una obra.')}`;
-                    }
-
-                    // Equipos relacionados
-                    const relatedGrid = document.getElementById('related-machines-grid');
-                    if (relatedGrid) {
-                        const related = list.filter(m => m.id !== machine.id).slice(0, 3);
-                        relatedGrid.innerHTML = related.map(rel => `
-                            <a href="maquinaria-detalle.html?id=${rel.id}" style="text-decoration: none; color: inherit; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; background: #fff; transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='none'">
-                                <img src="${rel.img}" alt="${rel.name}" style="width: 100%; height: 120px; object-fit: cover;">
-                                <div style="padding: 10px;">
-                                    <span style="font-size: 0.75rem; color: var(--blue-accent); font-weight: 600; text-transform: uppercase;">${rel.category}</span>
-                                    <h5 style="margin: 4px 0; font-size: 0.95rem; color: var(--blue-dark); font-family: 'Outfit', sans-serif;">${rel.name}</h5>
-                                    <span style="font-size: 0.8rem; color: #718096;">${rel.model}</span>
-                                </div>
-                            </a>
-                        `).join('');
-                    }
+                    populateMachine(machine, list);
                 });
         });
     </script>
