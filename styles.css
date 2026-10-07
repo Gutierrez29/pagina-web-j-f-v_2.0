@@ -982,19 +982,20 @@ h1, h2, h3, h4, .navbar a {
 .back-btn {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
     margin-bottom: 24px;
     color: var(--blue-dark);
     text-decoration: none;
-    font-weight: 600;
+    font-weight: 700;
     font-family: 'Outfit', sans-serif;
     font-size: 0.95rem;
-    transition: all 0.25s ease;
-    background: #f1f5f9;
-    border: 1px solid #e2e8f0;
-    padding: 9px 18px;
-    border-radius: 8px;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    background: #eaf2fa;
+    border: 1.5px solid #bdd7f0;
+    padding: 10px 22px;
+    border-radius: 50px;
     width: fit-content;
+    box-shadow: 0 2px 8px rgba(0, 51, 102, 0.08);
 }
 
 .back-btn:hover {
@@ -1002,7 +1003,7 @@ h1, h2, h3, h4, .navbar a {
     color: var(--white);
     border-color: var(--blue-accent);
     transform: translateX(-4px);
-    box-shadow: 0 4px 12px rgba(0, 114, 206, 0.2);
+    box-shadow: 0 4px 14px rgba(0, 114, 206, 0.25);
 }
 
 .main-content h2 {
@@ -3086,7 +3087,78 @@ h1, h2, h3, h4, .navbar a {
     padding: 28px;
     box-shadow: 0 4px 20px rgba(0, 34, 68, 0.05);
     position: sticky;
-    top: 100px;
+    top: 95px;
+}
+
+/* Barra de Retorno Sticky de Alta Visibilidad (maquinaria-detalle.html) */
+.detail-sticky-back-bar {
+    position: sticky;
+    top: var(--header-height, 80px);
+    z-index: 95;
+    margin: -35px -35px 25px -35px;
+    padding: 14px 35px;
+    background: #ffffff;
+    border-bottom: 1.5px solid #e2e8f0;
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    box-shadow: 0 4px 18px rgba(0, 34, 68, 0.08);
+}
+
+.sticky-bar-tag {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: var(--blue-dark);
+    font-family: 'Outfit', sans-serif;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #f1f5f9;
+    padding: 6px 14px;
+    border-radius: 30px;
+    border: 1px solid #e2e8f0;
+    max-width: 320px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.back-btn-prominent {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: #002b55;
+    color: #ffffff !important;
+    border: 1.5px solid #004080;
+    padding: 10px 22px;
+    border-radius: 50px;
+    font-weight: 700;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.95rem;
+    text-decoration: none;
+    box-shadow: 0 4px 14px rgba(0, 43, 85, 0.25);
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    white-space: nowrap;
+}
+
+.back-btn-prominent i {
+    font-size: 0.95rem;
+    transition: transform 0.25s ease;
+}
+
+.back-btn-prominent:hover {
+    background: var(--blue-accent);
+    border-color: var(--blue-accent);
+    color: #ffffff !important;
+    transform: translateX(-4px);
+    box-shadow: 0 6px 20px rgba(0, 114, 206, 0.35);
+}
+
+.back-btn-prominent:hover i {
+    transform: translateX(-3px);
 }
 
 .badge-brand {
@@ -3221,6 +3293,27 @@ h1, h2, h3, h4, .navbar a {
     .machine-detail-layout {
         grid-template-columns: 1fr;
         padding: 30px 0;
+    }
+
+    .machine-main-card {
+        padding: 24px 18px;
+    }
+
+    .detail-sticky-back-bar {
+        top: var(--header-height, 70px);
+        margin: -24px -18px 20px -18px;
+        padding: 12px 18px;
+        border-top-left-radius: 16px;
+        border-top-right-radius: 16px;
+    }
+
+    .back-btn-prominent {
+        padding: 8px 16px;
+        font-size: 0.88rem;
+    }
+
+    .sticky-bar-tag {
+        display: none;
     }
 
     .machine-sidebar-card {

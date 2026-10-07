@@ -91,9 +91,15 @@
             <div class="machine-detail-layout">
                 <!-- COLUMNA PRINCIPAL -->
                 <div class="machine-main-card">
-                    <a href="maquinaria.html" class="back-btn" style="margin-bottom: 25px;">
-                        <i class="fa-solid fa-arrow-left"></i> Volver al Catálogo de Maquinaria
-                    </a>
+                    <!-- BARRA DE RETORNO FIJA / STICKY (SIEMPRE VISIBLE AL NAVEGAR) -->
+                    <div class="detail-sticky-back-bar">
+                        <a href="maquinaria.html" class="back-btn-prominent" id="sticky-btn-back">
+                            <i class="fa-solid fa-arrow-left"></i> Volver al Catálogo de Maquinaria
+                        </a>
+                        <span class="sticky-bar-tag" id="sticky-bar-machine-name">
+                            <i class="fa-solid fa-truck-ramp-box" style="color: var(--blue-accent);"></i> <span id="sticky-machine-name-text">Detalle Técnico</span>
+                        </span>
+                    </div>
 
                     <h2 style="color: var(--blue-dark); font-family: 'Outfit', sans-serif; font-size: 1.8rem; margin-bottom: 12px;">
                         Memoria Operativa del Equipo
@@ -276,6 +282,8 @@
                 if (breadcrumbEl) breadcrumbEl.textContent = machine.name;
                 if (badgeCat) badgeCat.textContent = machine.category;
                 if (descEl) descEl.textContent = machine.desc;
+                const stickyMachineNameEl = document.getElementById('sticky-machine-name-text');
+                if (stickyMachineNameEl) stickyMachineNameEl.textContent = machine.name;
                 if (imgEl) {
                     imgEl.src = machine.img;
                     imgEl.alt = machine.name;
