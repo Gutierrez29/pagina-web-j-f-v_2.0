@@ -623,7 +623,9 @@
 
                 card.innerHTML = `
                     <div class="machinery-card-media">
-                        <img src="${item.img}" alt="${item.name}" width="600" height="375" loading="lazy" decoding="async">
+                        <a href="maquinaria-detalle.html?id=${item.id}" aria-label="Ver ficha técnica completa de ${item.name}">
+                            <img src="${item.img}" alt="${item.name}" width="600" height="375" loading="lazy" decoding="async">
+                        </a>
                         <div class="card-badges">
                             <span class="badge-brand">${item.brand}</span>
                             <span class="badge-available">Disponible</span>
@@ -631,7 +633,9 @@
                     </div>
                     <div class="machinery-card-body">
                         <span class="card-meta-category">${item.category}</span>
-                        <h3 class="machinery-card-title">${item.name}</h3>
+                        <h3 class="machinery-card-title">
+                            <a href="maquinaria-detalle.html?id=${item.id}" style="color: inherit; text-decoration: none;">${item.name}</a>
+                        </h3>
                         <p class="machinery-card-model">Modelo: <strong>${item.model}</strong> (${item.year})</p>
                         <div class="machinery-specs-summary">
                             <div class="spec-cell">
@@ -649,9 +653,9 @@
                         </div>
                         <p class="machinery-card-desc">${item.desc}</p>
                         <div class="machinery-card-actions">
-                            <button type="button" class="btn-card-spec" data-action="view-spec" data-id="${item.id}" aria-label="Ver ficha técnica de ${item.name}">
+                            <a href="maquinaria-detalle.html?id=${item.id}" class="btn-card-spec" aria-label="Ver ficha técnica de ${item.name}">
                                 <i class="fa-solid fa-file-lines" aria-hidden="true"></i> Ficha Técnica
-                            </button>
+                            </a>
                             <button type="button" class="btn-card-quote" data-action="quote-machine" data-id="${item.id}" aria-label="Cotizar ${item.name}">
                                 <i class="fa-solid fa-calculator" aria-hidden="true"></i> Cotizar
                             </button>
@@ -856,27 +860,28 @@
             }
         });
 
-        // Cotizar directamente un equipo (selección y scroll al cotizador)
+        // Cotizar directamente un equipo (selección local o redirección al cotizador multi-página)
         const quoteDirectMachine = (machineId) => {
             const machine = FLEET_DATA.find(m => m.id === machineId);
-            const machinerySelect = document.getElementById('quote-machinery');
-            const serviceSelect = document.getElementById('quote-service');
             const quotationSection = document.getElementById('cotizador');
 
-            if (machinerySelect && machine) {
-                machinerySelect.value = machine.name;
-            }
-            if (serviceSelect) {
-                serviceSelect.value = 'Alquiler de Maquinaria Pesada';
-            }
-
             if (quotationSection) {
+                const machinerySelect = document.getElementById('quote-machinery');
+                const serviceSelect = document.getElementById('quote-service');
+                if (machinerySelect && machine) {
+                    machinerySelect.value = machine.name;
+                }
+                if (serviceSelect) {
+                    serviceSelect.value = 'Alquiler de Maquinaria Pesada';
+                }
                 quotationSection.scrollIntoView({ behavior: 'smooth' });
-                // Enfocar el primer campo del cotizador
                 setTimeout(() => {
                     const firstInput = document.getElementById('quote-name');
                     if (firstInput) firstInput.focus();
                 }, 600);
+            } else if (machine) {
+                // Redirigir hacia contacto.html con parámetros preseleccionados
+                window.location.href = `contacto.html?equipo=${encodeURIComponent(machine.name)}&servicio=${encodeURIComponent('Alquiler de Maquinaria Pesada')}#cotizador`;
             }
         };
 
@@ -911,6 +916,53 @@
                 opt.textContent = `${machine.name} (${machine.category})`;
                 machinerySelect.appendChild(opt);
             });
+        }
+
+        // Auto-selección desde parámetros de URL (?equipo=...&servicio=...)
+        const urlParams = new URLSearchParams(window.location.search);
+        const prefilledEquip = urlParams.get('equipo');
+        const prefilledService = urlParams.get('servicio');
+        const serviceSelect = document.getElementById('quote-service');
+
+        if (serviceSelect && prefilledService) {
+            for (let i = 0; i < serviceSelect.options.length; i++) {
+                if (serviceSelect.options[i].value.toLowerCase().includes(prefilledService.toLowerCase()) ||
+                    prefilledService.toLowerCase().includes(serviceSelect.options[i].value.toLowerCase())) {
+                    serviceSelect.selectedIndex = i;
+                    break;
+                }
+            }
+        }
+
+        if (machinerySelect && prefilledEquip) {
+            let matched = false;
+            for (let i = 0; i < machinerySelect.options.length; i++) {
+                if (machinerySelect.options[i].value.toLowerCase().includes(prefilledEquip.toLowerCase()) ||
+                    prefilledEquip.toLowerCase().includes(machinerySelect.options[i].value.toLowerCase())) {
+                    machinerySelect.selectedIndex = i;
+                    matched = true;
+                    break;
+                }
+            }
+            if (!matched) {
+                const customOpt = document.createElement('option');
+                customOpt.value = prefilledEquip;
+                customOpt.textContent = prefilledEquip;
+                customOpt.selected = true;
+                machinerySelect.appendChild(customOpt);
+            }
+        }
+
+        // Scroll suave al cotizador si viene con ancla o parámetros pre-llenados
+        if (prefilledEquip || prefilledService || window.location.hash === '#cotizador') {
+            const cotizadorSec = document.getElementById('cotizador');
+            if (cotizadorSec) {
+                setTimeout(() => {
+                    cotizadorSec.scrollIntoView({ behavior: 'smooth' });
+                    const firstInput = document.getElementById('quote-name');
+                    if (firstInput) firstInput.focus();
+                }, 400);
+            }
         }
 
         // Helpers de validación

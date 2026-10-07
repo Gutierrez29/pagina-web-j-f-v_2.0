@@ -327,7 +327,7 @@
 
     <script src="script.js"></script>
     <script>
-        // Filtro de proyectos en proyectos.html
+        // Filtro de proyectos en proyectos.html con soporte para parametro URL (?cat=...)
         document.addEventListener('DOMContentLoaded', () => {
             const tabs = document.querySelectorAll('.project-tab-btn');
             const categories = {
@@ -337,23 +337,42 @@
                 'logistica': document.getElementById('cat-logistica')
             };
 
+            const applyFilter = (filter) => {
+                tabs.forEach(t => {
+                    const match = t.getAttribute('data-filter') === filter;
+                    t.classList.toggle('active', match);
+                });
+
+                if (filter === 'all') {
+                    Object.values(categories).forEach(cat => {
+                        if (cat) cat.style.display = 'block';
+                    });
+                } else {
+                    Object.entries(categories).forEach(([key, cat]) => {
+                        if (cat) cat.style.display = (key === filter) ? 'block' : 'none';
+                    });
+                }
+            };
+
             tabs.forEach(tab => {
                 tab.addEventListener('click', () => {
-                    tabs.forEach(t => t.classList.remove('active'));
-                    tab.classList.add('active');
                     const filter = tab.getAttribute('data-filter');
-
-                    if (filter === 'all') {
-                        Object.values(categories).forEach(cat => {
-                            if (cat) cat.style.display = 'block';
-                        });
-                    } else {
-                        Object.entries(categories).forEach(([key, cat]) => {
-                            if (cat) cat.style.display = (key === filter) ? 'block' : 'none';
-                        });
-                    }
+                    applyFilter(filter);
                 });
             });
+
+            // Auto-activar si se envía categoría por URL (?cat=obras, ?cat=logistica, etc.)
+            const params = new URLSearchParams(window.location.search);
+            const initialCat = params.get('cat');
+            if (initialCat && categories[initialCat]) {
+                applyFilter(initialCat);
+                const targetEl = categories[initialCat];
+                if (targetEl) {
+                    setTimeout(() => {
+                        targetEl.scrollIntoView({ behavior: 'smooth' });
+                    }, 250);
+                }
+            }
         });
     </script>
 </body>

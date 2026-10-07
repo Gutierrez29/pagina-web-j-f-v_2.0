@@ -1566,6 +1566,10 @@ h1, h2, h3, h4, .navbar a {
     transition: all 0.2s ease;
     text-align: center;
     text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
 }
 
 .btn-card-spec:hover {
@@ -1587,6 +1591,10 @@ h1, h2, h3, h4, .navbar a {
     transition: all 0.2s ease;
     text-align: center;
     text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
 }
 
 .btn-card-quote:hover {
