@@ -1230,6 +1230,8 @@ h1, h2, h3, h4, .navbar a {
    PANEL UNIFICADO DE CONTROL Y FILTROS (#maquinaria)
    ========================================= */
 .machinery-control-hub {
+    position: relative;
+    z-index: 50;
     background: var(--white);
     border: 1px solid #e2e8f0;
     border-radius: 16px;
@@ -1239,6 +1241,8 @@ h1, h2, h3, h4, .navbar a {
 }
 
 .control-hub-top {
+    position: relative;
+    z-index: 10;
     display: grid;
     grid-template-columns: 1.35fr 1.15fr 1.15fr;
     gap: 20px;
@@ -1373,6 +1377,12 @@ h1, h2, h3, h4, .navbar a {
     transition: transform 0.2s ease;
 }
 
+.combobox-filter-wrapper.is-open .combobox-search-input {
+    border-color: var(--blue-accent);
+    background: var(--white);
+    box-shadow: 0 0 0 4px rgba(0, 114, 206, 0.15);
+}
+
 .combobox-options-list {
     position: absolute;
     top: calc(100% + 6px);
@@ -1384,11 +1394,31 @@ h1, h2, h3, h4, .navbar a {
     padding: 6px;
     margin: 0;
     list-style: none;
-    max-height: 290px;
+    max-height: 420px;
     overflow-y: auto;
-    z-index: 100;
-    box-shadow: 0 12px 30px rgba(0, 34, 68, 0.15);
+    z-index: 1000;
+    box-shadow: 0 16px 36px rgba(0, 34, 68, 0.16), 0 2px 8px rgba(0, 0, 0, 0.05);
     display: none;
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e0 transparent;
+}
+
+.combobox-options-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.combobox-options-list::-webkit-scrollbar-track {
+    background: transparent;
+    margin: 6px;
+}
+
+.combobox-options-list::-webkit-scrollbar-thumb {
+    background: #cbd5e0;
+    border-radius: 6px;
+}
+
+.combobox-options-list::-webkit-scrollbar-thumb:hover {
+    background: #a0aec0;
 }
 
 .combobox-options-list.open {
@@ -1572,6 +1602,8 @@ h1, h2, h3, h4, .navbar a {
 
 /* Grid de Maquinaria */
 .machinery-grid {
+    position: relative;
+    z-index: 1;
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
     gap: 28px;

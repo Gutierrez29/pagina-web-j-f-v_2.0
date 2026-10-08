@@ -652,10 +652,14 @@
             if (!categoryDropdown) return;
             const isOpen = forceState !== undefined ? forceState : !categoryDropdown.classList.contains('open');
             categoryDropdown.classList.toggle('open', isOpen);
+            if (categoryComboboxWrap) {
+                categoryComboboxWrap.classList.toggle('is-open', isOpen);
+            }
             if (categoryToggleBtn) {
                 categoryToggleBtn.classList.toggle('rotated', isOpen);
             }
             if (isOpen) {
+                categoryDropdown.scrollTop = 0;
                 if (!categoryInput || !categoryInput.value.trim()) {
                     categoryOptionItems.forEach(item => item.classList.remove('hidden'));
                 }
